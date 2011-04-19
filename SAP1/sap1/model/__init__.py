@@ -65,3 +65,5 @@ from sap1.model.permiso import Permiso
 from sap1.model.rol import Rol
 from sap1.model.permiso_rol import PermisoRol
 from sap1.model.fase import Fase
+from sap1.model.usuario import Usuario
+
