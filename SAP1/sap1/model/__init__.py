@@ -60,5 +60,8 @@ def init_model(engine):
 
 # Import your model modules here.
 from sap1.model.auth import User, Group, Permission
-from sap1.model.page import Page, pages_table
+from sap1.model.page import Page
+from sap1.model.permiso import Permiso
+from sap1.model.rol import Rol
+from sap1.model.permiso_rol import PermisoRol
 
