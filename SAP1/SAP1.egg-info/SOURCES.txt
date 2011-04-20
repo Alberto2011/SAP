@@ -26,6 +26,12 @@ sap1/lib/base.py
 sap1/lib/helpers.py
 sap1/model/__init__.py
 sap1/model/auth.py
+sap1/model/fase.py
+sap1/model/page.py
+sap1/model/permiso.py
+sap1/model/permiso_rol.py
+sap1/model/rol.py
+sap1/model/usuario.py
 sap1/public/favicon.ico
 sap1/public/css/style.css
 sap1/public/images/contentbg.png
