@@ -66,4 +66,12 @@ from sap1.model.rol import Rol
 from sap1.model.permiso_rol import PermisoRol
 from sap1.model.fase import Fase
 from sap1.model.usuario import Usuario
+from sap1.model.proyecto import Proyecto
+from sap1.model.proy_fase_rol_usuario import ProyFaseRolUsuario
+from sap1.model.tipo_de_item import TipoDeItem
+from sap1.model.item import Item
+from sap1.model.campos import Campos
+from sap1.model.relacion_item import RelacionItem
+from sap1.model.archivos import Archivos
+from sap1.model.linea_base import LineaBase
 
