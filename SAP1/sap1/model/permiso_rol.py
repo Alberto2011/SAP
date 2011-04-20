@@ -20,7 +20,4 @@ class PermisoRol(object):
 
 
 # Mapper
-mapper_permiso = mapper(PermisoRol, tabla_permiso_rol) #properties={
-#    'permiso': relationship(Permiso), 'rol': relationship(Rol)
-#})
-
+mapper_permiso_rol = mapper(PermisoRol, tabla_permiso_rol)

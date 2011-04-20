@@ -25,4 +25,4 @@ class Usuario(object):
 
 
 # Mapper
-mapper_rol = mapper(Usuario, tabla_usuario)
+mapper_usuario = mapper(Usuario, tabla_usuario)
