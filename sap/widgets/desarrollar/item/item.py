@@ -243,6 +243,11 @@ class ItemForm(TableForm):
         #__omit_fields__ = ['id','idTipoDeItem','idFase','idLineaBase','version', 'nrohistorial','ultimaversion', 'estado']
         tiid=0
         campotipo= DBSession.query(Campos.tipoDeDato, Campos.nombre).filter_by(idTipoDeItem=13).all()
+        comlejidadoptions= [(1, 'Muy Baja (1)'), (2, 'Baja (2)'), (3, 'Media (3)'), (4, 'Alta (4)'), (5, 'Muy Alta (5)')]
+        
+        log.debug(comlejidadoptions)
+        
+                         
         #campo_options=[]
         
         #campotipo=campo_options
@@ -257,7 +262,7 @@ class ItemForm(TableForm):
 		HiddenField('idFase', label_text='idFase'),
         HiddenField('version', label_text='version'),
         HiddenField('estado', label_text='estado'),
-        TextField('complejidad',validator=NotEmpty ,label_text='complejidad'),
+        SingleSelectField('complejidad', options=comlejidadoptions, label_text='complejidad'),
         Spacer(),
         CalendarDatePicker('fechaCreacion', date_format='%d-%m-%y'),
         #Spacer(),
@@ -284,8 +289,9 @@ item_add_form = ItemForm('create_item_form')
 class ItemEditForm(EditableForm):
     __model__ = Item
     __disable_fields__=['nombre']
+    comlejidadoptions= [(1, 'Muy Baja (1)'), (2, 'Baja (2)'), (3, 'Media (3)'), (4, 'Alta (4)'), (5, 'Muy Alta (5)')]
     __field_widgets__ = {'nombre':TextField('nombre', label_text='Nombre'),
-                         'complejidad':TextField('complejidad',validator=NotEmpty ,label_text='complejidad')}
+                         'complejidad':SingleSelectField('complejidad', options=comlejidadoptions, label_text='complejidad')}
     
     __omit_fields__ = ['id','idTipoDeItem','idFase','fechaCreacion','idLineaBase','version', 'nrohistorial','ultimaversion', 'estado']
 

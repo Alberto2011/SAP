@@ -38,7 +38,7 @@
         <div py:if= "mostrarNew"> <a href='../elegirtipo/?fid=${fid}' class="add_link">Nuevo $model</a>  </div>
         <span py:if="value_list" style="margin-left:2em" py:content="tmpl_context.paginators.value_list.pager(link='../%s/'%model.lower())"/>
       </div>
-      <div class="crud_table" style="width:90%">
+      <div class="crud_table" style="width:120%">
         ${XML(tmpl_context.widget(value=value_list, action='../'+model.lower()+'s.json'))}
       </div>
     </div>

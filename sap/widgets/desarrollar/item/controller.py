@@ -214,13 +214,6 @@ class CrudRestController(RestController):
         
         log.debug('kwwwwww %s' %kw)
         
-        if int(kw['complejidad'])<0:
-            flash("La complejidad no puede ser negativo", "error")
-        log.debug('kwNewww: %s' %kw)
-        
-        
-        
-        
         """extrae el numhistorial ordenado sin repetir, para luego tomar el mayor valor y asi 
         poder asignarle un numhistorial mayor
         """
@@ -239,6 +232,8 @@ class CrudRestController(RestController):
             fase.estado = 'desarrollo'
         elif str(fase.estado).__eq__('lineaBaseTotal'):
             fase.estado = 'lineaBaseParcial'
+            
+        log.debug('kwwwwww %s' %kw)
         
         self.provider.create(self.model, params=kw)
         

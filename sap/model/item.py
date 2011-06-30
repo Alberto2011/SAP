@@ -31,11 +31,5 @@ class Item(DeclarativeBase):
     fechaCreacion=Column(Date)
     nrohistorial=Column(Integer,default=0)
     ultimaversion=Column(Integer,default=1)
-    
-
-
-
-
-
 
 
