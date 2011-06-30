@@ -91,7 +91,7 @@ log = logging.getLogger(__name__)
 
 class ItemTable(TableBase):
     __model__ = Item
-    __omit_fields__ = ['id', 'nrohistorial','ultimaversion']
+    __omit_fields__ = ['id', 'nrohistorial','ultimaversion', 'idTipoDeItem']
 item_table = ItemTable(DBSession) 
 
 
@@ -222,9 +222,11 @@ class ItemTableFiller(TableFiller):
         desc = kw.get('desc', False)
         
         if len(kw) > 0:
-            objs = DBSession.query(self.__entity__).filter((Item.idFase==kw['fid']) & (Item.ultimaversion==1) & (Item.estado!="borrado")).all()
-            for x in range (len(objs)):
-                log.debug("obj %s", objs[x].id)
+            objs = DBSession.query(self.__entity__).\
+                filter((Item.idFase==kw['fid']) &
+                    (Item.ultimaversion==1) &
+                    (Item.estado!="borrado")).order_by(Item.nrohistorial).all()
+                    
         else:
             objs = DBSession.query(self.__entity__).all()
 
@@ -244,8 +246,6 @@ class ItemForm(TableForm):
         tiid=0
         campotipo= DBSession.query(Campos.tipoDeDato, Campos.nombre).filter_by(idTipoDeItem=13).all()
         comlejidadoptions= [(1, 'Muy Baja (1)'), (2, 'Baja (2)'), (3, 'Media (3)'), (4, 'Alta (4)'), (5, 'Muy Alta (5)')]
-        
-        log.debug(comlejidadoptions)
         
                          
         #campo_options=[]
