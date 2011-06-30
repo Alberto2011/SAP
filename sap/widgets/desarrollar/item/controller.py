@@ -147,12 +147,11 @@ class CrudRestController(RestController):
         for fila in range(longitud):
             complejidad = int(values[fila]['complejidad'])
             values[fila]['idFase'] = DBSession.query(Fase.nombre).filter_by(id = values[fila]['idFase']).first()
-            
-            log. debug (values[fila])
             lineabase = values[fila]['idLineaBase']
             
             if lineabase != 'None':
-                values[fila]['idLineaBase'] = DBSession.query(LineaBase.nombre).filter_by(id=lineabase).first()
+                values[fila]['idLineaBase'] = DBSession.query(LineaBase.nombre)\
+                                                .filter_by(id=lineabase).first()
             else:
                 values[fila]['idLineaBase'] = 'Sin linea base'
             
@@ -166,8 +165,6 @@ class CrudRestController(RestController):
                 values[fila]['complejidad'] = 'Alta (4)'
             else:
                 values[fila]['complejidad'] = 'Muy alta (5)'
-                
-            #log. debug (values[fila])
                 
 
         tmpl_context.widget = self.table

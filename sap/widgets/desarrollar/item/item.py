@@ -221,6 +221,8 @@ class ItemTableFiller(TableFiller):
         order_by = kw.get('order_by', None)
         desc = kw.get('desc', False)
         
+        
+        
         if len(kw) > 0:
             objs = DBSession.query(self.__entity__).\
                 filter((Item.idFase==kw['fid']) &
@@ -229,6 +231,7 @@ class ItemTableFiller(TableFiller):
                     
         else:
             objs = DBSession.query(self.__entity__).all()
+
 
         count = len(objs)
         self.__count__ = count
