@@ -1,0 +1,46 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="master.html" />
+<head>
+
+<style>
+#menu_items {
+  padding:0px 12px 0px 2px;
+  list-style-type:None
+  }
+</style>
+</head>
+<body class="tundra">
+  <div style="height:0px;"> &nbsp; </div>
+  <div id="main_content">
+    <div style="float:left; padding-left:0px;">
+       
+    </div>
+    <div style="float:left; width:80%">
+      <h1 style="margin-top:1px;">Lista de Adjuntos </h1>
+      <div style="margin:1ex 0; width:90%">
+        
+			 <form method="post" action="save" enctype="multipart/form-data">
+			 
+			 
+    			Seleccionar Archivo:<br />
+			    <input type="file" name="userfile" /> <br />
+			    <input type="submit" value="Adjuntar un Archivo" />    
+			    </form>
+			    
+			    <h2>Adjuntos</h2>
+			    <div py:for="file in current_files">
+			    <a href="/view/${file.id}">${file.filename}</a> [<a href="/delete/${file.id}">x</a>]
+			    </div>
+      </div>
+      <div class="crud_table" style="height:50%; width:90%">
+        
+
+      </div>
+    </div>
+  </div>
+  <div style="clear:both;"/>
+
+</body>
+</html>

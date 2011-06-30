@@ -1,0 +1,4 @@
+recursive-include sap/public *
+include sap/public/favicon.ico
+recursive-include sap/i18n *
+recursive-include sap/templates *
