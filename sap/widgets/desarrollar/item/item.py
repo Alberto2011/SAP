@@ -91,7 +91,7 @@ log = logging.getLogger(__name__)
 
 class ItemTable(TableBase):
     __model__ = Item
-    __omit_fields__ = ['id']
+    __omit_fields__ = ['id', 'nrohistorial']
 item_table = ItemTable(DBSession) 
 
 
