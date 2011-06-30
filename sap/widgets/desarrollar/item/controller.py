@@ -211,9 +211,6 @@ class CrudRestController(RestController):
     @expose()
     @registered_validate(error_handler=new)
     def post(self, *args, **kw):
-        
-        log.debug('kwwwwww %s' %kw)
-        
         """extrae el numhistorial ordenado sin repetir, para luego tomar el mayor valor y asi 
         poder asignarle un numhistorial mayor
         """
@@ -232,8 +229,6 @@ class CrudRestController(RestController):
             fase.estado = 'desarrollo'
         elif str(fase.estado).__eq__('lineaBaseTotal'):
             fase.estado = 'lineaBaseParcial'
-            
-        log.debug('kwwwwww %s' %kw)
         
         self.provider.create(self.model, params=kw)
         
