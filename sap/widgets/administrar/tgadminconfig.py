@@ -9,6 +9,7 @@ from tgext.admin.config import AdminConfig, CrudRestControllerConfig
 from sprox.fillerbase import EditFormFiller
 from sprox.formbase import FilteringSchema
 from formencode.validators import FieldsMatch
+from sap.model import DBSession, metadata
 
 dojo_loaded = False
 
@@ -58,8 +59,8 @@ class UserControllerConfig(CrudRestControllerConfig):
     def _do_init_with_translations(self, translations):
         global TableBase, TableFiller, EditableForm, AddRecordForm
         if self.default_to_dojo and dojo_loaded:
-            TableBase = DojoTableBase
-            TableFiller = DojoTableFiller
+            #TableBase = DojoTableBase
+            #TableFiller = DojoTableFiller
             EditableForm = DojoEditableForm
             AddRecordForm = DojoAddRecordForm
 
@@ -159,8 +160,8 @@ class GroupControllerConfig(CrudRestControllerConfig):
     def _do_init_with_translations(self, translations):
         global TableBase, TableFiller, EditableForm, AddRecordForm
         if self.default_to_dojo and dojo_loaded:
-            TableBase = DojoTableBase
-            TableFiller = DojoTableFiller
+            #TableBase = DojoTableBase
+            #TableFiller = DojoTableFiller
             EditableForm = DojoEditableForm
             AddRecordForm = DojoAddRecordForm
 
