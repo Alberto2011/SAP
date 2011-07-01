@@ -1,0 +1,9 @@
+#Sun Jun 12 18:41:19 PYT 2011
+eclipse.preferences.version=1
+encoding//sap/controllers/error.py=utf-8
+encoding//sap/controllers/root.py=utf-8
+encoding//sap/controllers/secure.py=utf-8
+encoding//sap/model/__init__.py=utf-8
+encoding//sap/model/auth.py=utf-8
+encoding//sap/websetup/bootstrap.py=utf-8
+encoding//sap/websetup/schema.py=utf-8
