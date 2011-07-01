@@ -41,6 +41,9 @@ from sap.widgets.desarrollar.proyecto.proyecto import ProyectoDesarrollo
 from sap.widgets.desarrollar.fase.fase import FaseControllerD
 
 from sap.widgets.desarrollar.item.item import ItemController
+from sap.widgets.desarrollar.item.dibujar import Dibujar
+
+
 from sap.widgets.desarrollar.adjuntos.adjuntos import AdjuntosController
 from sap.widgets.desarrollar.lineabase.lineabase import LineaBaseController
 from sap.widgets.desarrollar.relacionitem.relacionitem import RelacionItemController
@@ -318,6 +321,7 @@ class RootController(BaseController):
     @expose()
     def calcularimpacto(self,**kw):
         """ids[] es un vector en el cual se guardaran los 'id' """
+        Dibujar()
         ids=[]
         ids.append(int(kw['iid']))
         impacto = 0
