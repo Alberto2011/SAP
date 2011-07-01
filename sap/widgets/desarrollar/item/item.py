@@ -267,7 +267,7 @@ class ItemForm(TableForm):
         HiddenField('estado', label_text='estado'),
         SingleSelectField('complejidad', options=comlejidadoptions, label_text='complejidad'),
         Spacer(),
-        CalendarDatePicker('fechaCreacion', date_format='%d-%m-%y'),
+        #CalendarDatePicker('fechaCreacion', date_format='%d-%m-%y'),
         #Spacer(),
         HiddenField('nrohistorial', label_text='nrohistorial'),
         #SingleSelectField('idTipoDeItem', options=tipo_options),
@@ -328,8 +328,6 @@ class ItemController(CrudRestController):
     edit_filler = item_edit_filler
     edit_form = item_edit_form
     
-
-    
     @with_trailing_slash
     @expose("sap.templates.desarrollar.item.get_all")
     @expose('json')
@@ -342,27 +340,6 @@ class ItemController(CrudRestController):
         return result
         #return super(ItemController, self).get_all(*args, **kw)
     
-    
-    """@with_trailing_slash
-    @expose("sap.templates.desarrollar.item.get_all")
-    @expose('json')
-    @paginate('value_list', items_per_page=7)
-    def get_all(self, *args, **kw):
-        return super(ItemController, self).get_all(*args, **kw)
-    """
-
-    """@without_trailing_slash
-    @expose('sap.templates.desarrollar.item.new')
-    def new(self, *args, **kw):
-       
-        tmpl_context.widget = self.new_form
-        # return dict(value=kw, model=self.model.__name__)
-        return super(ItemController, self).new(*args, **kw)        
-    """
     @expose('sap.templates.desarrollar.item.edit')
     def edit(self, *args, **kw):
         return super(ItemController, self).edit(*args, **kw)
-    
-    
-
-

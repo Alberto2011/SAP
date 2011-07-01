@@ -64,13 +64,6 @@ class ProyectoTableFiller(TableFiller):
         
         return value
 
-
-
-
-
-
-
-
     __model__ = Proyecto
 proyecto_table_filler = ProyectoTableFiller(DBSession)
 
@@ -83,7 +76,6 @@ class ProyectoForm(TableForm):
         #template = "sap.templates.administrar.proyecto.new"
         css = [CSSLink(link=url('/css/tooltips.css'))]
         show_errors = True
-        
 
 
 
@@ -93,8 +85,6 @@ class ProyectoForm(TableForm):
 	        Spacer(),
 		TextField('descripcion', label_text='Descripcion'),
 		#TextArea('descripcion', attrs=dict(rows=3, cols=10)),
-		Spacer(),
-		CalendarDatePicker('fechaCreacion', date_format='%d-%m-%y'),
         Spacer(),
         
         

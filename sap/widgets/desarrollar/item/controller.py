@@ -220,10 +220,9 @@ class CrudRestController(RestController):
         
         item_add_form = ItemForm('create_item_form', fields)
         
-        tmpl_context.form = item_add_form
+        tmpl_context.widget = item_add_form
         """
         tmpl_context.widget = self.new_form
-        #log.debug("campoTipo: %s" %campotipo)
         #return dict(value=kw, model=self.model.__name__)
         
         #child_args=dict(child_args=form_fields_dict)

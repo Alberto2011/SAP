@@ -66,11 +66,7 @@ from sap.model.proyecto import *
 
 
 #from sap.model.page import Page
-from sap.model.permiso import Permiso
-from sap.model.rol import Rol
-from sap.model.permiso_rol import PermisoRol
 from sap.model.fase import Fase
-from sap.model.usuario import Usuario
 from sap.model.proyecto import Proyecto
 from sap.model.proyfaseusuario import ProyFaseUsuario
 from sap.model.tipodeitem import TipoDeItem
@@ -80,6 +76,5 @@ from sap.model.relacion_item import RelacionItem
 from sap.model.adjuntos import Adjuntos
 from sap.model.lineabase import LineaBase
 from sap.model.detalleitem import DetalleItem
-from sap.model.historialitem import HistorialItem
 
 
