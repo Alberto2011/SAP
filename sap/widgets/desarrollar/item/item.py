@@ -247,7 +247,7 @@ class ItemForm(TableForm):
         #__model__ = Item
         #__omit_fields__ = ['id','idTipoDeItem','idFase','idLineaBase','version', 'nrohistorial','ultimaversion', 'estado']
         tiid=0
-        campotipo= DBSession.query(Campos.tipoDeDato, Campos.nombre).filter_by(idTipoDeItem=13).all()
+        #campotipo= DBSession.query(Campos.tipoDeDato, Campos.nombre).filter_by(idTipoDeItem=13).all()
         comlejidadoptions= [(1, 'Muy Baja (1)'), (2, 'Baja (2)'), (3, 'Media (3)'), (4, 'Alta (4)'), (5, 'Muy Alta (5)')]
         
                          

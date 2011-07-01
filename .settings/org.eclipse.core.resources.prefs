@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #Fri Jul 01 13:00:27 PYT 2011
+=======
+#Fri Jul 01 15:34:32 PYT 2011
+>>>>>>> ba1818455850459d36f1cf0cbfbcec55736f5970
 eclipse.preferences.version=1
 encoding//sap/controllers/error.py=utf-8
 encoding//sap/controllers/root.py=utf-8

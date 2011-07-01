@@ -19,7 +19,7 @@ class Adjuntos(DeclarativeBase):
     filename = Column(Unicode(255), nullable=False)
     filecontent = Column(LargeBinary)
     
-    def __init__(self,idItem, filename, filecontent):
+    def __init__(self,idItem=0, filename='', filecontent=''):
         
         self.idItem = idItem
         self.filename = filename

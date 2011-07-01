@@ -177,7 +177,6 @@ class CrudRestController(RestController):
         if longitud==0:
             #current_files = DBSession.query(Adjuntos).all()
             current_files = DBSession.query(Adjuntos).filter_by(idItem=iid).all()
-            log.debug('current: %s' %current_files)
             
             return dict(current_files=current_files, model=self.model.__name__,iid=iid)
         else:
@@ -192,9 +191,7 @@ class CrudRestController(RestController):
             if userfile=='':
                 flash("No ha selecionado ningun archivo", "error")
                 redirect("../new/?iid="+str(iid))
-            
-            #def save(self, userfile):
-            log.debug("userfile: %s" %userfile)
+            """
             forbidden_files = [".js", ".htm", ".html"]
             for forbidden_file in forbidden_files:
                 if userfile.filename.find(forbidden_file) != -1:
@@ -203,7 +200,7 @@ class CrudRestController(RestController):
             new_file = Adjuntos(filename=userfile.filename, filecontent=filecontent,idItem=idItem )
             DBSession.add(new_file)
             DBSession.flush()
-            
+            """
             """Realiza una copia del item cuando se adjunta un archivo y aumenta su version"""
             itemeditado= DBSession.query(Item).filter_by(id=idItem).first()
             itemnuevo=Item()
@@ -223,10 +220,7 @@ class CrudRestController(RestController):
             """Realiza copia de los valores de los atributos especificos"""
             
             atributoeditado=DBSession.query(DetalleItem).filter_by(iditem=itemeditado.id).all()
-            log.debug('atributoeditado: %s' %atributoeditado)
             
-            
-            #cantAtributo=len(atributoeditado)
             
             for objeto in atributoeditado:
                 nuevoDetalle=DetalleItem()
@@ -236,61 +230,48 @@ class CrudRestController(RestController):
                 nuevoDetalle.iditem=itemnuevo.id
                 DBSession.add(nuevoDetalle)
                 
+            """Realiza copia de los adjuntos"""
+            adjuntositemeditado=DBSession.query(Adjuntos).filter_by(idItem=itemeditado.id).all()
+            
+            itemnuevoadjunto=Adjuntos()
+            
+            for adj in adjuntositemeditado:
                 
+                log.debug("adj: %s" %adj)
                 
+                itemnuevoadjunto.idItem=itemnuevo.id
+                itemnuevoadjunto.filename=adj.filename
+                itemnuevoadjunto.filecontent=adj.filecontent
+                DBSession.add(itemnuevoadjunto)
             
-       
+            
+            
+            forbidden_files = [".js", ".htm", ".html"]
+            for forbidden_file in forbidden_files:
+                if userfile.filename.find(forbidden_file) != -1:
+                    return redirect("../adjuntos/new")
+            filecontent = userfile.file.read()
+            
+            log.debug('itemnuevo: %s' %itemnuevo.id)
+            
+            new_file = Adjuntos(filename=userfile.filename, filecontent=filecontent,idItem=itemnuevo.id )
+            DBSession.add(new_file)
+            #DBSession.flush()
+            
+            
+            
                 
-                
-                
-                
-                
-                
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             #self.provider.create(self.model, params=nuevo)
             
+            log.debug('adjuntositemeditado: %s' %adjuntositemeditado)
+                
+           
+                
             
             
             
             
-            
-            
-            
-            
-            
-            
-            
-            
-            #itemeditado.version=30
-            #itemnuevo=copy.copy(itemeditado)
-            
-            
-            
-            #itemnuevo.version=50
-            
-            DBSession.add(itemnuevo)
-            #log.debug('itemnuevoNombre: %s' %itemnuevo.id)
-            #log.debug('itemnuevoNombre: %s' %itemnuevo.version)
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            redirect("../new/?iid="+str(iid))
+            redirect("../new/?iid="+str(itemnuevo.id))
             #return dict(current_files=current_files ,model=self.model.__name__,iid=iid)
             
         
