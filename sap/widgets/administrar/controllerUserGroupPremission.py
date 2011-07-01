@@ -54,7 +54,7 @@ class AdminController(TGController):
             self.default_index_template = self.config.default_index_template
 
     @with_trailing_slash
-    @expose('tgext.admin.templates.index')
+    @expose('sap.templates.indexuserpermisiongroup')
     def index(self):
         #overrides the template for this method
         original_index_template = self.index.decoration.engines['text/html']
