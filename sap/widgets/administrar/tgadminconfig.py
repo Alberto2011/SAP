@@ -113,9 +113,13 @@ class UserControllerConfig(CrudRestControllerConfig):
             class NewForm(AddRecordForm):
                 __entity__ = self.model
                 __require_fields__     = [user_name_field, email_field]
-                __omit_fields__        = [password_field, 'created', '_password']
+                #__omit_fields__        = [password_field, 'created', '_password']
+                __omit_fields__        = ['created']
                 __hidden_fields__      = [user_id_field]
-                __field_order__        = [user_name_field, email_field, display_name_field, 'groups']
+                
+                _password = PasswordField('verify_password')
+                
+                #__field_order__        = [user_name_field, email_field, display_name_field, 'groups']
             if email_field is not None:
                 setattr(NewForm, email_field, TextField)
             if display_name_field is not None:
