@@ -9,8 +9,14 @@ from tgext.admin.config import AdminConfig, CrudRestControllerConfig
 from sprox.fillerbase import EditFormFiller
 from sprox.formbase import FilteringSchema
 from formencode.validators import FieldsMatch
+from sap.model import DBSession, metadata
 
 dojo_loaded = False
+
+import logging
+
+from repoze.what.predicates import has_permission 
+log = logging.getLogger(__name__)
 
 class PasswordFieldsMatch(FieldsMatch):
     field_names = ['password', 'verify_password']
@@ -53,8 +59,8 @@ class UserControllerConfig(CrudRestControllerConfig):
     def _do_init_with_translations(self, translations):
         global TableBase, TableFiller, EditableForm, AddRecordForm
         if self.default_to_dojo and dojo_loaded:
-            TableBase = DojoTableBase
-            TableFiller = DojoTableFiller
+            #TableBase = DojoTableBase
+            #TableFiller = DojoTableFiller
             EditableForm = DojoEditableForm
             AddRecordForm = DojoAddRecordForm
 
@@ -112,7 +118,7 @@ class UserControllerConfig(CrudRestControllerConfig):
         if not getattr(self, 'new_form_type', None):
             class NewForm(AddRecordForm):
                 __entity__ = self.model
-                __require_fields__     = [user_name_field, email_field]
+                __require_fields__     = [user_name_field, email_field,'groups']
                 #__omit_fields__        = [password_field, 'created', '_password']
                 __omit_fields__        = ['created']
                 __hidden_fields__      = [user_id_field]
@@ -120,6 +126,16 @@ class UserControllerConfig(CrudRestControllerConfig):
                 _password = PasswordField('verify_password')
                 
                 #__field_order__        = [user_name_field, email_field, display_name_field, 'groups']
+                __omit_fields__        = ['created', '_password',display_name_field]
+                __hidden_fields__      = [user_id_field]
+                #__field_order__        = [user_name_field, email_field, display_name_field, password, verify_password, 'groups']
+                __field_order__        = [user_name_field, email_field, 'password', 'verify_password', 'groups']
+                
+                
+                password = PasswordField('password', value='')
+                verify_password = PasswordField('verify_password')
+                __base_validator__ = edit_form_validator
+
             if email_field is not None:
                 setattr(NewForm, email_field, TextField)
             if display_name_field is not None:
@@ -152,8 +168,8 @@ class GroupControllerConfig(CrudRestControllerConfig):
     def _do_init_with_translations(self, translations):
         global TableBase, TableFiller, EditableForm, AddRecordForm
         if self.default_to_dojo and dojo_loaded:
-            TableBase = DojoTableBase
-            TableFiller = DojoTableFiller
+            #TableBase = DojoTableBase
+            #TableFiller = DojoTableFiller
             EditableForm = DojoEditableForm
             AddRecordForm = DojoAddRecordForm
 
