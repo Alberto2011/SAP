@@ -267,7 +267,7 @@ class ItemForm(TableForm):
         HiddenField('estado', label_text='estado'),
         SingleSelectField('complejidad', options=comlejidadoptions, label_text='complejidad'),
         Spacer(),
-        CalendarDatePicker('fechaCreacion', date_format='%d-%m-%y'),
+        #CalendarDatePicker('fechaCreacion', date_format='%d-%m-%y'),
         #Spacer(),
         HiddenField('nrohistorial', label_text='nrohistorial'),
         #SingleSelectField('idTipoDeItem', options=tipo_options),

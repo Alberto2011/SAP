@@ -4,6 +4,7 @@ from sap.model import metadata
 from sap.model.tipodeitem import TipoDeItem
 from sap.model.fase import Fase
 from sap.model.lineabase import LineaBase
+from datetime import datetime
 
 from sap.model import DeclarativeBase, metadata, DBSession
 from sqlalchemy import *
@@ -28,7 +29,7 @@ class Item(DeclarativeBase):
     version=Column(Integer,default=0)
     estado=Column(Text, default='nuevo')
     complejidad=Column(Integer,default=0,nullable=False)
-    fechaCreacion=Column(Date)
+    fechaCreacion=Column(Date, default=datetime.now)
     nrohistorial=Column(Integer,default=0)
     ultimaversion=Column(Integer,default=1)
 

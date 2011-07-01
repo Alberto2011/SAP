@@ -100,9 +100,10 @@ class LineaBaseForm(TableForm):
         TextField('nombre', label_text='Nombre'),
 		HiddenField('idFase', label_text='idFase'),
 	    Spacer(),
-		CalendarDatePicker('fechaCreacion', date_format='%d-%m-%y'),
+		#CalendarDatePicker('fechaCreacion', date_format='%d-%m-%y'),
+        #Spacer(),
+        CheckBoxList('items', options=items_options),
         Spacer(),
-        CheckBoxList('items', options=items_options)
 		]
         submit_text = 'Crear LineaBase'
         
