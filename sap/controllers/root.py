@@ -41,7 +41,7 @@ from sap.widgets.desarrollar.proyecto.proyecto import ProyectoDesarrollo
 from sap.widgets.desarrollar.fase.fase import FaseControllerD
 
 from sap.widgets.desarrollar.item.item import ItemController
-from sap.widgets.desarrollar.item.dibujar import Dibujar
+#from sap.widgets.desarrollar.item.dibujar import Dibujar
 
 
 from sap.widgets.desarrollar.adjuntos.adjuntos import AdjuntosController
