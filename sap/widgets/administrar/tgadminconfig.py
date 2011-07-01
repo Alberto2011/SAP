@@ -12,6 +12,11 @@ from formencode.validators import FieldsMatch
 
 dojo_loaded = False
 
+import logging
+
+from repoze.what.predicates import has_permission 
+log = logging.getLogger(__name__)
+
 class PasswordFieldsMatch(FieldsMatch):
     field_names = ['password', 'verify_password']
     def validate_partial(self, field_dict, state):
@@ -113,9 +118,15 @@ class UserControllerConfig(CrudRestControllerConfig):
             class NewForm(AddRecordForm):
                 __entity__ = self.model
                 __require_fields__     = [user_name_field, email_field]
-                __omit_fields__        = [password_field, 'created', '_password']
+                #__omit_fields__        = [password_field, 'created', '_password']
+                __omit_fields__        = ['created', '_password']
                 __hidden_fields__      = [user_id_field]
-                __field_order__        = [user_name_field, email_field, display_name_field, 'groups']
+                #__field_order__        = [user_name_field, email_field, display_name_field, password, verify_password, 'groups']
+                __field_order__        = [user_name_field, email_field, display_name_field, 'password', 'verify_password', 'groups']
+                password = PasswordField('password', value='')
+                verify_password = PasswordField('verify_password')
+                __base_validator__ = edit_form_validator
+                
             if email_field is not None:
                 setattr(NewForm, email_field, TextField)
             if display_name_field is not None:

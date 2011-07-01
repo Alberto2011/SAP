@@ -202,34 +202,6 @@ class RootController(BaseController):
 
     """-----------------------------------FIN ADJUNTOS----------------------------- """ 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     
     @expose('sap.templates.desarrollar.elegirtipo.new')
     def elegirtipo(self,**kw):
