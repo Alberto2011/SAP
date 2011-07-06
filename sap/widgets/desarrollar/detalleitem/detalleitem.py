@@ -110,7 +110,8 @@ detalleitem_add_form = DetalleItemForm('create_detalleitem_form')
         
 class DetalleItemEditForm(EditableForm):
     __model__ = DetalleItem
-    __field_attrs__ = {'nombrecampo':{'rows':'2'},'valor':{'rows':'2'},}
+    __disable_fields__=['nombrecampo']
+    __field_attrs__ = {'valor':{'rows':'2'},'nombrecampo':{'rows':'2'},}
     
     __omit_fields__ = ['id','tipo','iditem']
 
