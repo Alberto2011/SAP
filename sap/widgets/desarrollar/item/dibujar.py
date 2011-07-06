@@ -1,38 +1,30 @@
-from matplotlib import pyplot,lines 
-from pylab import *
-import numpy
+# -*- coding: utf-8 -*-
+
+
+import pydot
+
 class Dibujar():
-    t = "Itempetei"
-    N = 4
+    graph = pydot.Dot(graph_type='digraph')
     
-    nombreFases = ['fase1','fase2','fase3','fase4']
-    matriz = numpy.zeros((5,5))
-    x = [1,1,1,1,2,2,2,2,3,3,3,3,4,4,4]
-    y = [1,2,3,4,1,2,3,4,1,2,3,4,1,3,4]
-    clf()
+    node_a = pydot.Node("Node A", style="filled", fillcolor="red")
+    node_b = pydot.Node("Node B", style="filled", fillcolor="green")
+    node_c = pydot.Node("Node C", style="filled", fillcolor="#0000ff")
+    node_d = pydot.Node("Node D", style="filled", fillcolor="#976856")
     
-    a,b = numpy.array([[2, 3, 4], [1,2, 3]])
-    c,d = numpy.array([[2,2], [1,2]])
-    
-    ind = np.arange(N)
-    width = 1 
-    #ax2 = pyplot.axes()
+    graph.add_node(node_a)
+    graph.add_node(node_b)
+    graph.add_node(node_c)
+    graph.add_node(node_d)
     
     
-    
-    plt.text(1, 1, t, family='Item 1', style='italic', ha='center')
-    plt.text(1, 2, 'nombreItem', family='Item 1', style='italic', ha='center')
-    #b,g,k(negro),m, 1(blanco)
-    plt.annotate('', xy=(2, 2), xytext=(2, 1),arrowprops=dict(facecolor='1', shrink=0.03),)
-    plt.annotate('', xy=(2, 1), xytext=(1, 4),arrowprops=dict(facecolor='b', shrink=0.03),)
-    plt.annotate('', xy=(3, 3), xytext=(2, 1),arrowprops=dict(facecolor='b', shrink=0.03),)
-    ## xy es donde termina la flecha... xytext es donde empiesa la flecha
-    plot(x, y, 'H', markeredgecolor='#90D0E1', markeredgewidth=1, markerfacecolor='#90D0E1', markersize=40)
+    graph.add_edge(pydot.Edge(node_a, node_b))
+    graph.add_edge(pydot.Edge(node_b, node_c))
+    graph.add_edge(pydot.Edge(node_c, node_d))
+    graph.add_edge(pydot.Edge(node_d, node_b))
     
     
-    axis([0, 5, 0, 5])
-    plt.title('Fases del Proyecto')
-    #for fase in nombreFases:
-    plt.xticks(ind+width, nombreFases )
-    pyplot.savefig( 'ojala.png' )
-    plt.show()
+    graph.add_edge(pydot.Edge(node_d, node_a, label="and back we go again", labelfontcolor="#009933", fontsize="10.0", color="blue"))
+    
+    
+    
+    graph.write_png('example2_graph.png')

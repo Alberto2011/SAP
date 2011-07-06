@@ -233,12 +233,12 @@ class CrudRestController(RestController):
             """Realiza copia de los adjuntos"""
             adjuntositemeditado=DBSession.query(Adjuntos).filter_by(idItem=itemeditado.id).all()
             
-            itemnuevoadjunto=Adjuntos()
+            
             
             for adj in adjuntositemeditado:
                 
                 log.debug("adj: %s" %adj)
-                
+                itemnuevoadjunto=Adjuntos()
                 itemnuevoadjunto.idItem=itemnuevo.id
                 itemnuevoadjunto.filename=adj.filename
                 itemnuevoadjunto.filecontent=adj.filecontent

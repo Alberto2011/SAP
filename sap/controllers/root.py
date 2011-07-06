@@ -41,7 +41,7 @@ from sap.widgets.desarrollar.proyecto.proyecto import ProyectoDesarrollo
 from sap.widgets.desarrollar.fase.fase import FaseControllerD
 
 from sap.widgets.desarrollar.item.item import ItemController
-#from sap.widgets.desarrollar.item.dibujar import Dibujar
+from sap.widgets.desarrollar.item.dibujar import Dibujar
 
 
 from sap.widgets.desarrollar.adjuntos.adjuntos import AdjuntosController
@@ -191,15 +191,62 @@ class RootController(BaseController):
     @expose()
     def delete(self, fileid):
         
+        #log.debug("Soy Archivo Borrado")
         
+        """Se extrae el ID del Item que supuestamente se borrará, para crear un nuevo Item """       
         iid=DBSession.query(Adjuntos.idItem).filter_by(id=fileid).first()
+        log.debug("IdArchivoBorrado: %s" %iid[0])
+        """Se crea un nuevo item"""
+        itemeditado=DBSession.query(Item).filter_by(id=iid).first()
+        itemnuevo=Item()
+        itemnuevo.version=itemeditado.version + 1
+        itemnuevo.idTipoDeItem=itemeditado.idTipoDeItem
+        itemnuevo.idFase=itemeditado.idFase
+        itemnuevo.idLineaBase=itemeditado.idLineaBase
+        itemnuevo.fechaCreacion=itemeditado.fechaCreacion
+        itemnuevo.nrohistorial=itemeditado.nrohistorial
+        itemnuevo.ultimaversion=1
+        itemeditado.ultimaversion=0
+        itemnuevo.estado='modificado'
+        itemnuevo.complejidad=itemeditado.complejidad
+        itemnuevo.nombre=itemeditado.nombre
+        DBSession.add(itemnuevo)
         
-        try:
+        """Realiza copia de los valores de los atributos especificos"""
+            
+        atributoeditado=DBSession.query(DetalleItem).filter_by(iditem=itemeditado.id).all()
+            
+        for objeto in atributoeditado:
+            nuevoDetalle=DetalleItem()
+            nuevoDetalle.tipo=objeto.tipo
+            nuevoDetalle.nombrecampo=objeto.nombrecampo
+            nuevoDetalle.valor=objeto.valor
+            nuevoDetalle.iditem=itemnuevo.id
+            DBSession.add(nuevoDetalle)
+                
+        """Realiza copia de los adjuntos"""
+        adjuntositemeditado=DBSession.query(Adjuntos).filter_by(idItem=itemeditado.id).all()
+        
+        for adj in adjuntositemeditado:
+            log.debug("adjuntoBorraado: %s" %adj.id)
+            log.debug("fileid: %s" %fileid)
+   
+            if str(adj.id) != str(fileid): #No se copiará el archivo "supuestamente" borrado
+                log.debug("fileid2: %s" %fileid)
+                itemnuevoadjunto=Adjuntos()
+                itemnuevoadjunto.idItem=itemnuevo.id
+                itemnuevoadjunto.filename=adj.filename
+                itemnuevoadjunto.filecontent=adj.filecontent
+                DBSession.add(itemnuevoadjunto)
+        
+ 
+        
+        """try:
             userfile = DBSession.query(Adjuntos).filter_by(id=fileid).one()
         except:
-            return redirect("../../adjuntos/new/?iid="+str(iid[0]) )
-        DBSession.delete(userfile)
-        return redirect("../../adjuntos/new/?iid="+str(iid[0]))
+            return redirect("../../adjuntos/new/?iid="+str(itemnuevo.id) )
+        #DBSession.delete(userfile)"""
+        return redirect("../../adjuntos/new/?iid="+str(itemnuevo.id))
 
 
 
