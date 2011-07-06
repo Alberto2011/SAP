@@ -189,10 +189,6 @@ class CrudRestController(RestController):
         
         
         
-        log.debug('PosTipoItemNew=%s' % idtipo[0])
-        log.debug('PosTipoItemKW=%s' % kw['idFase'])
-        
-        
         raise redirect("/campos/?tid="+str(idtipo[0]))
     
     

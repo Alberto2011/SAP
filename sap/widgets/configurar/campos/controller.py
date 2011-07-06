@@ -165,8 +165,6 @@ class CrudRestController(RestController):
     @without_trailing_slash
     @expose('sap.templates.configurar.campos.new')
     def new(self,tid=None ,*args, **kw):
-        log.debug("KwvalorCampos %s" %kw)
-        
         """Display a page to show a new record."""
         tmpl_context.widget = self.new_form
         return dict(value={'idTipoDeItem':tid}, model=self.model.__name__)

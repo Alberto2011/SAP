@@ -356,7 +356,7 @@ class ItemController(CrudRestController):
         for ct in camponombre:
             #log.debug(ct[1])
             if str(ct[0]).__eq__('date'):
-                campo1 = CalendarDatePicker(str(ct[2]), label_text= ct[1]+' ('+ct[0]+')', date_format= '%d/%m/%y')
+                campo1 = CalendarDatePicker(str(ct[2]), label_text= ct[1]+' ('+ct[0]+')', date_format= '%d/%m/%Y')
             else:
                 campo1 = TextField(str(ct[2]), label_text= ct[1]+' ('+ct[0]+')')
             
@@ -375,20 +375,25 @@ class ItemController(CrudRestController):
         poder asignarle un numhistorial mayor
         """
         campotipo= DBSession.query(Campos.tipoDeDato, Campos.nombre, Campos.id).filter_by(idTipoDeItem=kw['idTipoDeItem']).all()
+        #log.debug('a %s', kw)
 
         for ct in campotipo:
             if str(ct[0]).__eq__('integer'):
-                log.debug(kw[str(ct[2])])
                 try:
-                    
                     int(kw[str(ct[2])])
                 except:
-                    flash('Tipo de dato introducido en \"' + str(ct[1]) + '\" no es valido', 'error')
+                    flash('\"' + str(ct[1]) + '\". Debe ingresar un entero', 'error')
                     redirect('./new/?tid='+kw['idTipoDeItem'])
-            #elif str(ct[0]).__eq__('date'):
-                
-        
-        log.debug('a %s', kw)
+            elif str(ct[0]).__eq__('date'):
+                """False = fecha no valida
+                    True = fecha valida"""
+                if not (self.fechaValida(kw[str(ct[2])])):
+                    flash('\"' + str(ct[1]) + '\" Fecha no valida. Formato: dd/mm/aaaa', 'error')
+                    redirect('./new/?tid='+kw['idTipoDeItem'])
+            else:
+                if kw[str(ct[2])].__eq__(''):
+                    flash('\"' + str(ct[1]) + '\" no puede ser vacio', 'error')
+                    redirect('./new/?tid='+kw['idTipoDeItem'])
         
         num=[x for x in (DBSession.query(Item.nrohistorial).order_by(Item.nrohistorial.desc()).distinct())]
         
@@ -424,3 +429,46 @@ class ItemController(CrudRestController):
             self.provider.create(DetalleItem, params=detalle)
         
         raise redirect('./?fid='+kw['idFase'])
+
+    def fechaValida (self, fecha):
+        if fecha.__eq__(''):
+            return False
+        
+        longfecha = len(fecha)
+        
+        if longfecha != 10:
+            return False
+        
+        if str(fecha[2]) != '/':
+            return False
+        
+        if str(fecha[5]) != '/':
+            return False
+        
+        dia = fecha[0] + fecha[1]
+        mes = fecha [3] + fecha [4]
+        anho = fecha [6] + fecha [7] + fecha [8] + fecha [9]
+        
+        try:
+            dia = int(dia)
+            mes = int(mes)
+            anho = int(anho)
+        except:
+            return False
+
+        meses = {'1':31, '2':28, '3':31, '4':30, '5':31, '6':30, 
+                 '7':31, '8':31, '9':30, '10':31, '11':30, '12':31}
+        
+        if 1900 < anho < 9999:
+            if (anho % 4) == 0:
+                meses['2'] = 29
+            
+            if 0 < mes < 13:
+                if 0 < dia <= meses[str(mes)]:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False

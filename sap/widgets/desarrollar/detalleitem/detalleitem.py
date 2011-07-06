@@ -31,7 +31,7 @@ log = logging.gEditableFormetLogger(__name__)
 
 class DetalleItemTable(TableBase):
     __model__ = DetalleItem
-    __omit_fields__ = ['id']
+    __omit_fields__ = ['id', 'iditem']
 detalleitem_table = DetalleItemTable(DBSession) 
 
 
