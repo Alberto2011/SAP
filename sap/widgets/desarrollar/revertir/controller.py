@@ -1,7 +1,10 @@
 """
 """
 from sap.model import DeclarativeBase, metadata, DBSession
-from sap.model import Item
+from sap.model.item import Item
+from sap.model.detalleitem import DetalleItem
+from sap.model.adjuntos import Adjuntos
+
 
 from tg import expose, flash, redirect, tmpl_context
 from tg.decorators import without_trailing_slash, with_trailing_slash
@@ -185,14 +188,37 @@ class CrudRestController(RestController):
         el item con la ultima version, "ultima version" pasa a 0 """
         item2.version= versionmayor[0]+1
         item2.ultimaversion=1
-        
-        
         item2.estado=item.estado
         item2.complejidad=item.complejidad
         item2.fechaCreacion=item.fechaCreacion
         item2.nrohistorial=item.nrohistorial
-        
         DBSession.add(item2)
+        
+        """Realiza copia de los valores de los atributos especificos"""
+            
+        atributoeditado=DBSession.query(DetalleItem).filter_by(iditem=item.id).all()
+            
+            
+        for objeto in atributoeditado:
+            nuevoDetalle=DetalleItem()
+            nuevoDetalle.tipo=objeto.tipo
+            nuevoDetalle.nombrecampo=objeto.nombrecampo
+            nuevoDetalle.valor=objeto.valor
+            nuevoDetalle.iditem=item2.id #el ID del nuevo item
+            DBSession.add(nuevoDetalle)
+                
+        """Realiza copia de los adjuntos"""
+        adjuntositemeditado=DBSession.query(Adjuntos).filter_by(idItem=item.id).all()
+            
+        for adj in adjuntositemeditado:
+                
+            log.debug("adj: %s" %adj)
+            itemnuevoadjunto=Adjuntos()
+            itemnuevoadjunto.idItem=item2.id
+            itemnuevoadjunto.filename=adj.filename
+            itemnuevoadjunto.filecontent=adj.filecontent
+            DBSession.add(itemnuevoadjunto)        
+        
         
         redirect('../'+'../item/?fid=' + str(item.idFase))
 

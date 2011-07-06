@@ -4,6 +4,7 @@ from sap.model import DeclarativeBase, metadata, DBSession
 from sap.model.item import Item
 from sap.model.campos import Campos
 from sap.model.detalleitem import DetalleItem
+from sap.model.adjuntos import Adjuntos
 
 from tg import expose, flash, redirect, tmpl_context
 from tg.decorators import without_trailing_slash, with_trailing_slash
@@ -212,8 +213,66 @@ class CrudRestController(RestController):
             if pk not in kw and i < len(args):
                 kw[pk] = args[i]
 
-        self.provider.update(self.model, params=kw)
-        redirect('../' * len(pks))
+        #self.provider.update(self.model, params=kw)
+        
+        log.debug('detalleEditado: %s' %kw[pk])
+        
+        """-----------Se obtiene el ID item a editado-------------"""
+        iid=DBSession.query(DetalleItem.iditem).filter_by(id=kw[pk]).first()
+        
+        """Se crea un nuevo item"""
+        itemeditado=DBSession.query(Item).filter_by(id=iid).first()
+        itemnuevo=Item()
+        itemnuevo.version=itemeditado.version + 1
+        itemnuevo.idTipoDeItem=itemeditado.idTipoDeItem
+        itemnuevo.idFase=itemeditado.idFase
+        itemnuevo.idLineaBase=itemeditado.idLineaBase
+        itemnuevo.fechaCreacion=itemeditado.fechaCreacion
+        itemnuevo.nrohistorial=itemeditado.nrohistorial
+        itemnuevo.ultimaversion=1
+        itemeditado.ultimaversion=0
+        itemnuevo.estado='modificado'
+        itemnuevo.complejidad=itemeditado.complejidad
+        itemnuevo.nombre=itemeditado.nombre
+        DBSession.add(itemnuevo)
+
+        """Realiza copia de los valores de los atributos especificos"""
+            
+        atributoeditado=DBSession.query(DetalleItem).filter_by(iditem=itemeditado.id).all()
+            
+        for objeto in atributoeditado:
+            
+            
+            nuevoDetalle=DetalleItem()
+            nuevoDetalle.tipo=objeto.tipo
+            nuevoDetalle.nombrecampo=objeto.nombrecampo
+            
+            if str(objeto.id)==str(kw[pk]):
+                nuevoDetalle.valor=kw['valor']
+            else:
+                nuevoDetalle.valor=objeto.valor
+
+            nuevoDetalle.iditem=itemnuevo.id
+            DBSession.add(nuevoDetalle)
+                
+        """Realiza copia de los adjuntos"""
+        adjuntositemeditado=DBSession.query(Adjuntos).filter_by(idItem=itemeditado.id).all()
+        
+        for adj in adjuntositemeditado:
+            itemnuevoadjunto=Adjuntos()
+            itemnuevoadjunto.idItem=itemnuevo.id
+            itemnuevoadjunto.filename=adj.filename
+            itemnuevoadjunto.filecontent=adj.filecontent
+            DBSession.add(itemnuevoadjunto)
+
+
+
+
+
+        
+        #detalleitem/?iid=113
+        
+        redirect('../?iid=' + str(itemnuevo.id) )
 
     @expose()
     def post_delete(self, *args, **kw):

@@ -195,7 +195,7 @@ class RootController(BaseController):
         
         """Se extrae el ID del Item que supuestamente se borrará, para crear un nuevo Item """       
         iid=DBSession.query(Adjuntos.idItem).filter_by(id=fileid).first()
-        log.debug("IdArchivoBorrado: %s" %iid[0])
+
         """Se crea un nuevo item"""
         itemeditado=DBSession.query(Item).filter_by(id=iid).first()
         itemnuevo=Item()
