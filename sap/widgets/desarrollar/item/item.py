@@ -4,7 +4,7 @@ from sap.model.campos import Campos
 from sap.model import DeclarativeBase, metadata, DBSession
 from tg.decorators import without_trailing_slash, with_trailing_slash, paginate
 from tw.core import WidgetsList
-from tw.forms import CheckBoxList,TableForm, TextField, CalendarDatePicker, SingleSelectField, TextArea
+from tw.forms import Form, CheckBoxList,TableForm, TextField, CalendarDatePicker, SingleSelectField, TextArea, FormField, ContainerMixin
 
 """validadores"""
 from formencode.validators import Int, NotEmpty, DateConverter, DateValidator
@@ -271,7 +271,7 @@ class ItemForm(TableForm):
         #Spacer(),
         HiddenField('nrohistorial', label_text='nrohistorial'),
         #SingleSelectField('idTipoDeItem', options=tipo_options),
-        HiddenField('idTipoDeItem', label_text='idTipoDeItem'), 
+        HiddenField('idTipoDeItem', label_text='idTipoDeItem'),
 		]
         #log.debug(campotipo)
         """
