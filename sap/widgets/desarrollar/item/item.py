@@ -13,21 +13,6 @@ from formencode.api import FancyValidator
 from formencode.api import Invalid
 import tw.forms as twf
 
-
-####################3
-
-#import tw.jquery
-#from sprox.jquery.tablebase import JQueryTableBase
-#from sprox.jquery.fillerbase import JQueryTableFiller
-#    from sprox.jquery.formbase import DojoAddRecordForm, DojoEditableForm
-#jquery_loaded = True
-
-######################3
-
-
-
-
-
 from sprox.tablebase import TableBase
 from sprox.formbase import EditableForm, AddRecordForm
 from sap.widgets.administrar.adminfillerbase import TableFiller, EditFormFiller, EditFormFiller
@@ -41,6 +26,7 @@ from sap.model.proyecto import Proyecto
 from sap.model.tipodeitem import TipoDeItem
 from sap.model.campos import Campos
 from sap.model.lineabase import LineaBase
+from sap.model.detalleitem import DetalleItem
 
 
 
@@ -324,7 +310,7 @@ class ItemController(CrudRestController):
     model = Item
     table = item_table
     table_filler = item_table_filler
-    new_form = item_add_form
+    #new_form = None
     edit_filler = item_edit_filler
     edit_form = item_edit_form
     
@@ -343,3 +329,98 @@ class ItemController(CrudRestController):
     @expose('sap.templates.desarrollar.item.edit')
     def edit(self, *args, **kw):
         return super(ItemController, self).edit(*args, **kw)
+    
+    @without_trailing_slash
+    #@expose('tgext.crud.templates.new')
+    @expose('sap.templates.desarrollar.item.new')
+    def new(self,tid=None ,*args, **kw):
+        """Display a page to show a new record."""
+            
+        fid= DBSession.query(TipoDeItem.idFase).filter_by(id=tid).first()
+    
+        comlejidadoptions= [(1, 'Muy Baja (1)'), (2, 'Baja (2)'), (3, 'Media (3)'), (4, 'Alta (4)'), (5, 'Muy Alta (5)')]
+        
+        campos = [TextField('nombre', label_text='Nombre'),
+                  Spacer(),
+                  HiddenField('idFase', label_text='idFase'),
+                  HiddenField('version', label_text='version'),
+                  HiddenField('estado', label_text='estado'),
+                  SingleSelectField('complejidad', options=comlejidadoptions, label_text='complejidad'),
+                  Spacer(),
+                  HiddenField('nrohistorial', label_text='nrohistorial'),
+                  HiddenField('idTipoDeItem', label_text='idTipoDeItem'),
+                  ]
+        
+        camponombre= DBSession.query(Campos.tipoDeDato, Campos.nombre, Campos.id).filter_by(idTipoDeItem=tid).all()
+
+        for ct in camponombre:
+            #log.debug(ct[1])
+            if str(ct[0]).__eq__('date'):
+                campo1 = CalendarDatePicker(str(ct[2]), label_text= ct[1]+' ('+ct[0]+')', date_format= '%d/%m/%y')
+            else:
+                campo1 = TextField(str(ct[2]), label_text= ct[1]+' ('+ct[0]+')')
+            
+            campos.append(campo1)
+            campos.append(Spacer())
+        
+        #self.new_form = TableForm('tf', fields=campos, submit_text='Guardar')
+        #tmpl_context.widget = self.new_form
+        
+        tmpl_context.widget = TableForm('create_table_form', fields=campos, submit_text='Guardar')
+        return dict(value={'idTipoDeItem':tid, 'idFase':fid,  },model=self.model.__name__)
+    
+    @expose()
+    def post(self, *args, **kw):
+        """extrae el numhistorial ordenado sin repetir, para luego tomar el mayor valor y asi 
+        poder asignarle un numhistorial mayor
+        """
+        campotipo= DBSession.query(Campos.tipoDeDato, Campos.nombre, Campos.id).filter_by(idTipoDeItem=kw['idTipoDeItem']).all()
+
+        for ct in campotipo:
+            if str(ct[0]).__eq__('integer'):
+                log.debug(kw[str(ct[2])])
+                try:
+                    
+                    int(kw[str(ct[2])])
+                except:
+                    flash('Tipo de dato introducido en \"' + str(ct[1]) + '\" no es valido', 'error')
+                    redirect('./new/?tid='+kw['idTipoDeItem'])
+            #elif str(ct[0]).__eq__('date'):
+                
+        
+        log.debug('a %s', kw)
+        
+        num=[x for x in (DBSession.query(Item.nrohistorial).order_by(Item.nrohistorial.desc()).distinct())]
+        
+        """Por cada Item creado, aumenta el nrohistorial en una unidad """
+        
+        if num != None  and len(num)>0:
+            kw['nrohistorial']=int(num[0][0]) + 1
+        else:
+            kw['nrohistorial']=1
+            
+        fase = DBSession.query(Fase).filter_by(id=kw['idFase']).first()
+        
+        if str(fase.estado).__eq__('inicial'):
+            fase.estado = 'desarrollo'
+        elif str(fase.estado).__eq__('lineaBaseTotal'):
+            fase.estado = 'lineaBaseParcial'
+        
+        kw1= {}
+        kw1['nombre'] = kw['nombre']
+        kw1['idTipoDeItem'] = kw['idTipoDeItem']
+        kw1['idFase'] = kw['idFase']
+        kw1['complejidad'] = kw['complejidad']
+        kw1['nrohistorial'] = kw['nrohistorial']
+        
+        itemnuevo = self.provider.create(self.model, params=kw1)
+        
+        for ct in campotipo:
+            detalle = {}
+            detalle['tipo'] = ct[0]
+            detalle['nombrecampo'] = ct[1]
+            detalle['valor'] = kw[str(ct[2])]
+            detalle['iditem'] = itemnuevo.id
+            self.provider.create(DetalleItem, params=detalle)
+        
+        raise redirect('./?fid='+kw['idFase'])

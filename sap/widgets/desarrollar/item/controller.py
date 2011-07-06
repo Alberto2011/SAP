@@ -206,7 +206,6 @@ class CrudRestController(RestController):
         """Display a page to show a new record."""
         
         
-        
         fid= DBSession.query(TipoDeItem.idFase).filter_by(id=tid).first()
         """Extra los campos del tipo de Item elegido """
         
@@ -237,6 +236,7 @@ class CrudRestController(RestController):
         """extrae el numhistorial ordenado sin repetir, para luego tomar el mayor valor y asi 
         poder asignarle un numhistorial mayor
         """
+        log.debug(kw)
         num=[x for x in (DBSession.query(Item.nrohistorial).order_by(Item.nrohistorial.desc()).distinct())]
         
         """Por cada Item creado, aumenta el nrohistorial en una unidad """
@@ -253,7 +253,7 @@ class CrudRestController(RestController):
         elif str(fase.estado).__eq__('lineaBaseTotal'):
             fase.estado = 'lineaBaseParcial'
         
-        self.provider.create(self.model, params=kw)
+        #self.provider.create(self.model, params=kw)
         
         raise redirect('./?fid='+kw['idFase'])
         
