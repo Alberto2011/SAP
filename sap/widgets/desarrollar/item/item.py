@@ -326,10 +326,6 @@ class ItemController(CrudRestController):
         return result
         #return super(ItemController, self).get_all(*args, **kw)
     
-    @expose('sap.templates.desarrollar.item.edit')
-    def edit(self, *args, **kw):
-        return super(ItemController, self).edit(*args, **kw)
-    
     @without_trailing_slash
     #@expose('tgext.crud.templates.new')
     @expose('sap.templates.desarrollar.item.new')
@@ -374,6 +370,7 @@ class ItemController(CrudRestController):
         """extrae el numhistorial ordenado sin repetir, para luego tomar el mayor valor y asi 
         poder asignarle un numhistorial mayor
         """
+        
         campotipo= DBSession.query(Campos.tipoDeDato, Campos.nombre, Campos.id).filter_by(idTipoDeItem=kw['idTipoDeItem']).all()
         #log.debug('a %s', kw)
 
@@ -472,3 +469,4 @@ class ItemController(CrudRestController):
                 return False
         else:
             return False
+        

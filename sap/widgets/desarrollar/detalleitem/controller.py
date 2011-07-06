@@ -215,8 +215,26 @@ class CrudRestController(RestController):
 
         #self.provider.update(self.model, params=kw)
         
-        log.debug('detalleEditado: %s' %kw[pk])
+        log.debug('detalleEditado: %s' %kw)
+        detalleitem = DBSession.query(DetalleItem).filter_by(id=kw['id']).first()
         
+        if str(detalleitem.tipo).__eq__('integer'):
+            try:
+                int(kw['valor'])
+            except:
+                flash('\"' + str(detalleitem.nombrecampo) + '\". Debe ingresar un entero', 'error')
+                redirect('../'+kw['id']+'/edit')
+        elif str(detalleitem.tipo).__eq__('date'):
+            """False = fecha no valida
+                True = fecha valida"""
+            if not (self.fechaValida(kw['valor'])):
+                flash('\"' + str(detalleitem.nombrecampo) + '\" Fecha no valida. Formato: dd/mm/aaaa', 'error')
+                redirect('../'+kw['id']+'/edit')
+        else:
+            if kw['valor'].__eq__(''):
+                flash('\"' + str(detalleitem.nombrecampo) + '\" no puede ser vacio', 'error')
+                redirect('../'+kw['id']+'/edit')
+                
         """-----------Se obtiene el ID item a editado-------------"""
         iid=DBSession.query(DetalleItem.iditem).filter_by(id=kw[pk]).first()
         
@@ -264,11 +282,6 @@ class CrudRestController(RestController):
             itemnuevoadjunto.filename=adj.filename
             itemnuevoadjunto.filecontent=adj.filecontent
             DBSession.add(itemnuevoadjunto)
-
-
-
-
-
         
         #detalleitem/?iid=113
         
@@ -289,3 +302,45 @@ class CrudRestController(RestController):
         """This is the code that creates a confirm_delete page"""
         return dict(args=args)
 
+    def fechaValida (self, fecha):
+        if fecha.__eq__(''):
+            return False
+        
+        longfecha = len(fecha)
+        
+        if longfecha != 10:
+            return False
+        
+        if str(fecha[2]) != '/':
+            return False
+        
+        if str(fecha[5]) != '/':
+            return False
+        
+        dia = fecha[0] + fecha[1]
+        mes = fecha [3] + fecha [4]
+        anho = fecha [6] + fecha [7] + fecha [8] + fecha [9]
+        
+        try:
+            dia = int(dia)
+            mes = int(mes)
+            anho = int(anho)
+        except:
+            return False
+
+        meses = {'1':31, '2':28, '3':31, '4':30, '5':31, '6':30, 
+                 '7':31, '8':31, '9':30, '10':31, '11':30, '12':31}
+        
+        if 1900 < anho < 9999:
+            if (anho % 4) == 0:
+                meses['2'] = 29
+            
+            if 0 < mes < 13:
+                if 0 < dia <= meses[str(mes)]:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False

@@ -96,11 +96,7 @@ class DetalleItemForm(TableForm):
         HiddenField('iditem', label_text='iditem'),
           
         ]
-        
-        
 
-        
-        
         submit_text = 'Crear DetalleItem'
        
 detalleitem_add_form = DetalleItemForm('create_detalleitem_form')
@@ -157,6 +153,6 @@ class DetalleItemController(CrudRestController):
         return result
         #return super(DetalleItemController, self).get_all(*args, **kw)
     
-    
+
 
 

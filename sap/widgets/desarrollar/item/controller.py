@@ -236,7 +236,6 @@ class CrudRestController(RestController):
         """extrae el numhistorial ordenado sin repetir, para luego tomar el mayor valor y asi 
         poder asignarle un numhistorial mayor
         """
-        log.debug(kw)
         num=[x for x in (DBSession.query(Item.nrohistorial).order_by(Item.nrohistorial.desc()).distinct())]
         
         """Por cada Item creado, aumenta el nrohistorial en una unidad """
@@ -407,9 +406,8 @@ class CrudRestController(RestController):
         relaciones= DBSession.query(RelacionItem).filter((RelacionItem.idItem1==d['id']) | (RelacionItem.idItem2==d['id'])).all()
         
         longitud=len(relaciones)
-        log.debug("longitud: %s" %longitud)
+        
         for x in range(longitud):
-            log.debug("relaciones: %s" %relaciones[x])
             DBSession.delete(relaciones[x])
         
         """---------------------------------------------------------------"""
