@@ -325,6 +325,7 @@ class ItemController(CrudRestController):
     table = item_table
     table_filler = item_table_filler
     new_form = item_add_form
+    
     edit_filler = item_edit_filler
     edit_form = item_edit_form
     
@@ -343,3 +344,5 @@ class ItemController(CrudRestController):
     @expose('sap.templates.desarrollar.item.edit')
     def edit(self, *args, **kw):
         return super(ItemController, self).edit(*args, **kw)
+    
+  
