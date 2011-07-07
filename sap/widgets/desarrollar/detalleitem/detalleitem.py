@@ -31,7 +31,7 @@ log = logging.gEditableFormetLogger(__name__)
 
 class DetalleItemTable(TableBase):
     __model__ = DetalleItem
-    __omit_fields__ = ['id']
+    __omit_fields__ = ['id', 'iditem']
 detalleitem_table = DetalleItemTable(DBSession) 
 
 
@@ -96,11 +96,7 @@ class DetalleItemForm(TableForm):
         HiddenField('iditem', label_text='iditem'),
           
         ]
-        
-        
 
-        
-        
         submit_text = 'Crear DetalleItem'
        
 detalleitem_add_form = DetalleItemForm('create_detalleitem_form')
@@ -157,6 +153,6 @@ class DetalleItemController(CrudRestController):
         return result
         #return super(DetalleItemController, self).get_all(*args, **kw)
     
-    
+
 
 

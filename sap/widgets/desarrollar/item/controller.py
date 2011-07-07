@@ -206,7 +206,6 @@ class CrudRestController(RestController):
         """Display a page to show a new record."""
         
         
-        
         fid= DBSession.query(TipoDeItem.idFase).filter_by(id=tid).first()
         """Extra los campos del tipo de Item elegido """
         
@@ -253,7 +252,7 @@ class CrudRestController(RestController):
         elif str(fase.estado).__eq__('lineaBaseTotal'):
             fase.estado = 'lineaBaseParcial'
         
-        self.provider.create(self.model, params=kw)
+        #self.provider.create(self.model, params=kw)
         
         raise redirect('./?fid='+kw['idFase'])
         
@@ -407,9 +406,8 @@ class CrudRestController(RestController):
         relaciones= DBSession.query(RelacionItem).filter((RelacionItem.idItem1==d['id']) | (RelacionItem.idItem2==d['id'])).all()
         
         longitud=len(relaciones)
-        log.debug("longitud: %s" %longitud)
+        
         for x in range(longitud):
-            log.debug("relaciones: %s" %relaciones[x])
             DBSession.delete(relaciones[x])
         
         """---------------------------------------------------------------"""

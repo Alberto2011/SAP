@@ -48,7 +48,6 @@ class TipoDeItemTableFiller(TableFiller):
         
         iteminstancia=DBSession.query(Item.id).filter_by(idTipoDeItem=pklist).all()
         cantidadinstancia=len(iteminstancia)
-        log.debug('cantidadinstancia: %s' %cantidadinstancia)
         #log.debug('iteminstancia: %s' %iteminstancia)
         
         if cantidadinstancia>0:

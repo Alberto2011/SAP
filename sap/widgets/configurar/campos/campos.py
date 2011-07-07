@@ -128,7 +128,6 @@ class CamposController(CrudRestController):
     @expose('json')
     @paginate('value_list', items_per_page=7)
     def get_all(self,tid=None ,*args, **kw):
-        log.debug("KwGtAll %s" %tid)
         kw['tid']=tid
         result=super(CamposController, self).get_all(*args, **kw)
         result['tid']=tid
