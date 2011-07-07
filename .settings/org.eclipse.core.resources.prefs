@@ -1,4 +1,4 @@
-#Sat Jul 02 12:52:20 PYT 2011
+#Thu Jul 07 16:08:54 PYT 2011
 =\=\=\=\=\=\=
 <<<<<<<=HEAD
 >>>>>>>=ba1818455850459d36f1cf0cbfbcec55736f5970
@@ -12,4 +12,3 @@ encoding//sap/model/auth.py=utf-8
 encoding//sap/model/userfile.py=utf-8
 encoding//sap/websetup/bootstrap.py=utf-8
 encoding//sap/websetup/schema.py=utf-8
-encoding//sap/widgets/desarrollar/item/dibujar.py=utf-8
