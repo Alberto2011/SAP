@@ -390,26 +390,48 @@ class RootController(BaseController):
     """------------------------------ Fin Calculo de Impacto--------------------------- """
     
     def dibujar(self):
-        graph = pydot.Dot(graph_type='digraph')
+        """Dibuja un grafo dirigido a partir de una matriz de relaciones
+        y un matriz de nodos"""
         
-        node_a = pydot.Node("Node A", style="filled", fillcolor="red")
-        node_b = pydot.Node("Node B", style="filled", fillcolor="green")
-        node_c = pydot.Node("Node C", style="filled", fillcolor="#0000ff")
-        node_d = pydot.Node("Node D", style="filled", fillcolor="#976856")
+        relaciones=[(4,1), (6,1), (4,2), (5,2), (4,3), \
+               (5,3), (6,3), (7,6), (8,9), (8,7)]
         
-        graph.add_node(node_a)
-        graph.add_node(node_b)
-        graph.add_node(node_c)
-        graph.add_node(node_d)
+        nodosporfase=[(1,2,3), (4,5,6,7), (8,9)]
         
-        graph.add_edge(pydot.Edge(node_a, node_b))
-        graph.add_edge(pydot.Edge(node_b, node_c))
-        graph.add_edge(pydot.Edge(node_c, node_d))
-        graph.add_edge(pydot.Edge(node_d, node_b))
+        g=self.grafo_de_relaciones(relaciones)
+        subg= pydot.Subgraph('', rank='same')
         
-        graph.add_edge(pydot.Edge(node_d, node_a, label="and back we go again", labelfontcolor="#009933", fontsize="10.0", color="blue"))
+        for fase in nodosporfase:
+            subg= pydot.Subgraph('', rank='same')
+            for nodo in fase:
+                subg.add_node(pydot.Node(str(nodo),label=str(nodo),color='blue')) 
+                
+            g.add_subgraph(subg)
         
-        graph.write_png('sap/public/images/example2_graph.png')
+        g.write_png('sap/public/images/example2_graph.png')
+    
+    def grafo_de_relaciones(self, edge_list, node_prefix=''):
+        """Crea las relaciones en el grafo a partir de una matriz de relaciones.
+        Utilizado por el metodo dibujar(self)"""
+    
+        graph = pydot.Dot(graph_type='digraph', rankdir='RL')
+            
+        for edge in edge_list:
+            
+            if isinstance(edge[0], str):
+                src = node_prefix + edge[0]
+            else:
+                src = node_prefix + str(edge[0])
+                
+            if isinstance(edge[1], str):
+                dst = node_prefix + edge[1]
+            else:
+                dst = node_prefix + str(edge[1])
+    
+            e = pydot.Edge( src, dst )
+            graph.add_edge(e)
+            
+        return graph
     
     """------------------------------ Recorrer Arbol-----------------------------------
     Uso:
@@ -536,17 +558,12 @@ class RootController(BaseController):
     def usuario(self, **kw):
         tmpl_context.form = create_user_form
         return dict(modelname='Usuario', value=kw)
-    
-    
-
-
 
 
     @expose('sap.templates.configurar.configuracion')
     def configuracion(self):
         """Display some information about auth* on this application."""
         return dict(page='configuracion')
-
 
 
     @expose('sap.templates.about')
