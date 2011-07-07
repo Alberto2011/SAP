@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Main Controller"""
-
+import pydot
 from tg import expose, flash, require, url, request, redirect,response
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 #from tgext.admin.tgadminconfig import TGAdminConfig
@@ -41,7 +41,6 @@ from sap.widgets.desarrollar.proyecto.proyecto import ProyectoDesarrollo
 from sap.widgets.desarrollar.fase.fase import FaseControllerD
 
 from sap.widgets.desarrollar.item.item import ItemController
-from sap.widgets.desarrollar.item.dibujar import Dibujar
 
 
 from sap.widgets.desarrollar.adjuntos.adjuntos import AdjuntosController
@@ -365,10 +364,10 @@ class RootController(BaseController):
             return dict(tipoitem_options=lineaBase)
    
     """------------------------------Calculo de Impacto--------------------------- """
-    @expose()
+    @expose('sap.templates.desarrollar.item.dibujar')
     def calcularimpacto(self,**kw):
         """ids[] es un vector en el cual se guardaran los 'id' """
-        Dibujar()
+        self.dibujar()
         ids=[]
         ids.append(int(kw['iid']))
         impacto = 0
@@ -384,11 +383,33 @@ class RootController(BaseController):
         
         fid=DBSession.query(Item.idFase, Item.nombre).filter_by(id=kw['iid']).first()
         flash("El impacto de modificar el item \"" +str(fid[1]) +"\" es: "+ str(impacto))
-        redirect('/item/?fid='+str(fid[0]))
+        #redirect('/item/?fid='+str(fid[0]))
+        return dict()
     
     
     """------------------------------ Fin Calculo de Impacto--------------------------- """
     
+    def dibujar(self):
+        graph = pydot.Dot(graph_type='digraph')
+        log.debug("entre")
+        node_a = pydot.Node("Node A", style="filled", fillcolor="red")
+        node_b = pydot.Node("Node B", style="filled", fillcolor="green")
+        node_c = pydot.Node("Node C", style="filled", fillcolor="#0000ff")
+        node_d = pydot.Node("Node D", style="filled", fillcolor="#976856")
+        
+        graph.add_node(node_a)
+        graph.add_node(node_b)
+        graph.add_node(node_c)
+        graph.add_node(node_d)
+        
+        graph.add_edge(pydot.Edge(node_a, node_b))
+        graph.add_edge(pydot.Edge(node_b, node_c))
+        graph.add_edge(pydot.Edge(node_c, node_d))
+        graph.add_edge(pydot.Edge(node_d, node_b))
+        
+        graph.add_edge(pydot.Edge(node_d, node_a, label="and back we go again", labelfontcolor="#009933", fontsize="10.0", color="blue"))
+        
+        graph.write_png('sap/public/images/example2_graph.png')
     
     """------------------------------ Recorrer Arbol-----------------------------------
     Uso:
