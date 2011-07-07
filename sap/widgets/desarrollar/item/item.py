@@ -310,12 +310,7 @@ class ItemController(CrudRestController):
     model = Item
     table = item_table
     table_filler = item_table_filler
-<<<<<<< HEAD
-    new_form = item_add_form
-    
-=======
-    #new_form = None
->>>>>>> 16cda3c3ad4218185c6dc013eebf8af3dfd75a1a
+
     edit_filler = item_edit_filler
     edit_form = item_edit_form
     
@@ -331,13 +326,7 @@ class ItemController(CrudRestController):
         return result
         #return super(ItemController, self).get_all(*args, **kw)
     
-<<<<<<< HEAD
-    @expose('sap.templates.desarrollar.item.edit')
-    def edit(self, *args, **kw):
-        return super(ItemController, self).edit(*args, **kw)
-    
-  
-=======
+
     @without_trailing_slash
     #@expose('tgext.crud.templates.new')
     @expose('sap.templates.desarrollar.item.new')
@@ -482,4 +471,4 @@ class ItemController(CrudRestController):
         else:
             return False
         
->>>>>>> 16cda3c3ad4218185c6dc013eebf8af3dfd75a1a
+
