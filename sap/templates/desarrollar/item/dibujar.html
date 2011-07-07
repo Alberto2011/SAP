@@ -14,29 +14,7 @@
 </style>
 </head>
 <body class="tundra">
-  <div style="height:0px;"> &nbsp; </div>
-
-  <div style="float:left; padding-left:0px;">
-        <ul id="menu_items" py:if="hasattr(tmpl_context, 'menu_items')">
-            <li py:for="lower, item in sorted(tmpl_context.menu_items.iteritems())"><a href="../${lower}s/">$item.__name__</a></li>
-       </ul>
-  </div>
-  
-  <img src="${tg.url('/images/example2_graph.png')}"/>
-  
-  <!--
-  <div style="float:left;" class="crud_add">
-    <h2 style="margin-top:1px;">Nuevo $model</h2>
-    
-    ${XML(tmpl_context.widget(value=value, action='../'))}
-     
-  </div>
-  <div style="height:0px; clear:both;"> &nbsp; </div>
-
-
-  
-  <a href='/item/?fid=${value["idFase"][0]}'><input type="button" name="cancelar" value="Atrás"/></a>
-  -->
-  
+  <center><img src="${tg.url('/images/example2_graph.png')}"/></center>
+  <a href='${link["url"]}'><input type="button" name="cancelar" value="Atrás"/></a>
 </body>
 </html>

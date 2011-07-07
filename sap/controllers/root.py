@@ -384,14 +384,14 @@ class RootController(BaseController):
         fid=DBSession.query(Item.idFase, Item.nombre).filter_by(id=kw['iid']).first()
         flash("El impacto de modificar el item \"" +str(fid[1]) +"\" es: "+ str(impacto))
         #redirect('/item/?fid='+str(fid[0]))
-        return dict()
+        return dict(link={'url':'/item/?fid='+str(fid[0])})
     
     
     """------------------------------ Fin Calculo de Impacto--------------------------- """
     
     def dibujar(self):
         graph = pydot.Dot(graph_type='digraph')
-        log.debug("entre")
+        
         node_a = pydot.Node("Node A", style="filled", fillcolor="red")
         node_b = pydot.Node("Node B", style="filled", fillcolor="green")
         node_c = pydot.Node("Node C", style="filled", fillcolor="#0000ff")
