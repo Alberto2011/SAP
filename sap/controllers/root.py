@@ -3,13 +3,9 @@
 import pydot
 from tg import expose, flash, require, url, request, redirect,response
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
-#from tgext.admin.tgadminconfig import TGAdminConfig
 from sap.widgets.administrar.tgadminconfig import TGAdminConfig
-#from tgext.admin.controller import AdminController
 from sap.widgets.administrar.controllerUserGroupPremission import AdminController 
-
 from repoze.what import predicates
-
 from sap.lib.base import BaseController
 from sap.model import DBSession, metadata
 from sap import model
@@ -240,11 +236,32 @@ class RootController(BaseController):
         
  
         
-        """try:
-            userfile = DBSession.query(Adjuntos).filter_by(id=fileid).one()
-        except:
-            return redirect("../../adjuntos/new/?iid="+str(itemnuevo.id) )
-        #DBSession.delete(userfile)"""
+        
+        """Copia las relaciones """
+        relaciones = DBSession.query(RelacionItem.idItem1,RelacionItem.idItem2).filter((RelacionItem.idItem2==itemeditado.id) | (RelacionItem.idItem1==itemeditado.id)).all()
+        longitud = len(relaciones)
+        newRelation=RelacionItem()
+        for x in range(longitud):
+            log.debug('Creando relaciones')
+            if int(itemeditado.id) == int(relaciones[x][0]):
+                newRelation.idItem1=int(itemnuevo.id)
+                newRelation.idItem2=relaciones[x][1]
+                DBSession.add(newRelation)
+                #self.provider.create(RelacionItem, params=newRelation)
+            elif int(itemeditado.id) == int(relaciones[x][1]):
+                newRelation.idItem1=relaciones[x][0]
+                newRelation.idItem2=int(itemnuevo.id)
+                DBSession.add(newRelation)
+        
+        
+
+
+
+
+
+
+
+
         return redirect("../../adjuntos/new/?iid="+str(itemnuevo.id))
 
 
@@ -390,41 +407,49 @@ class RootController(BaseController):
     """------------------------------ Fin Calculo de Impacto--------------------------- """
     
     def dibujar(self):
+
+        """Dibuja un grafo dirigido a partir de una matriz de relaciones
+        y un matriz de nodos"""
         
+        relaciones=[(4,1), (6,1), (4,2), (5,2), (4,3), \
+               (5,3), (6,3), (7,6), (8,9), (8,7)]
         
+        nodosporfase=[(1,2,3), (4,5,6,7), (8,9)]
         
+        g=self.grafo_de_relaciones(relaciones)
+        subg= pydot.Subgraph('', rank='same')
         
+        for fase in nodosporfase:
+            subg= pydot.Subgraph('', rank='same')
+            for nodo in fase:
+                subg.add_node(pydot.Node(str(nodo),label=str(nodo),color='blue')) 
+                
+            g.add_subgraph(subg)
+        
+        g.write_png('sap/public/images/example2_graph.png')
+    
+    def grafo_de_relaciones(self, edge_list, node_prefix=''):
+        """Crea las relaciones en el grafo a partir de una matriz de relaciones.
+        Utilizado por el metodo dibujar(self)"""
+    
         graph = pydot.Dot(graph_type='digraph', rankdir='RL')
-        graph2 = pydot.Dot(graph_type='digraph', rankdir='TB')
-        
-        node_a = pydot.Node("Node A", style="filled", fillcolor="red")
-        node_b = pydot.Node("Node B", style="filled", fillcolor="green")
-        node_d = pydot.Node("Node D", style="dashed", fillcolor="#976856",shape='triangle')
-        
-        
-        graph.add_node(node_a)
-        graph.add_node(node_b)
-        graph.add_node(node_d)
-        
-        
-        graph.add_edge(pydot.Edge(node_a, node_b))
-        graph.add_edge(pydot.Edge(node_d, node_b))
-        graph.add_edge(pydot.Edge(node_d, node_a))
-        
-        graph2.add_edge(pydot.Edge(node_a, node_b))
-        graph2.add_edge(pydot.Edge(node_d, node_b))
-        graph2.add_edge(pydot.Edge(node_d, node_a))
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        graph.write_png('sap/public/images/example2_graph.png')
+            
+        for edge in edge_list:
+            
+            if isinstance(edge[0], str):
+                src = node_prefix + edge[0]
+            else:
+                src = node_prefix + str(edge[0])
+                
+            if isinstance(edge[1], str):
+                dst = node_prefix + edge[1]
+            else:
+                dst = node_prefix + str(edge[1])
+    
+            e = pydot.Edge( src, dst )
+            graph.add_edge(e)
+            
+        return graph
     
     """------------------------------ Recorrer Arbol-----------------------------------
     Uso:
@@ -551,17 +576,12 @@ class RootController(BaseController):
     def usuario(self, **kw):
         tmpl_context.form = create_user_form
         return dict(modelname='Usuario', value=kw)
-    
-    
-
-
 
 
     @expose('sap.templates.configurar.configuracion')
     def configuracion(self):
         """Display some information about auth* on this application."""
         return dict(page='configuracion')
-
 
 
     @expose('sap.templates.about')

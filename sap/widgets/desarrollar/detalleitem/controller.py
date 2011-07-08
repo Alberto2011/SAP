@@ -5,6 +5,7 @@ from sap.model.item import Item
 from sap.model.campos import Campos
 from sap.model.detalleitem import DetalleItem
 from sap.model.adjuntos import Adjuntos
+from sap.model.relacion_item import RelacionItem
 
 from tg import expose, flash, redirect, tmpl_context
 from tg.decorators import without_trailing_slash, with_trailing_slash
@@ -282,6 +283,23 @@ class CrudRestController(RestController):
             itemnuevoadjunto.filename=adj.filename
             itemnuevoadjunto.filecontent=adj.filecontent
             DBSession.add(itemnuevoadjunto)
+        
+        
+        """Copia las relaciones """
+        relaciones = DBSession.query(RelacionItem.idItem1,RelacionItem.idItem2).filter((RelacionItem.idItem2==itemeditado.id) | (RelacionItem.idItem1==itemeditado.id)).all()
+        longitud = len(relaciones)
+        newRelation=RelacionItem()
+        for x in range(longitud):
+            if int(itemeditado.id) == int(relaciones[x][0]):
+                newRelation.idItem1=int(itemnuevo.id)
+                newRelation.idItem2=relaciones[x][1]
+                DBSession.add(newRelation)
+                #self.provider.create(RelacionItem, params=newRelation)
+            elif int(itemeditado.id) == int(relaciones[x][1]):
+                newRelation.idItem1=relaciones[x][0]
+                newRelation.idItem2=int(itemnuevo.id)
+                DBSession.add(newRelation)
+        
         
         #detalleitem/?iid=113
         

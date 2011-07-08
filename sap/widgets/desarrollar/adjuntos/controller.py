@@ -1,5 +1,8 @@
 import copy
 from sap.model.detalleitem import DetalleItem
+from sap.model.relacion_item import RelacionItem
+
+
 from sap.model.item import Item
 from sap.model import DBSession
 from sap.model.adjuntos import Adjuntos
@@ -229,6 +232,25 @@ class CrudRestController(RestController):
                 nuevoDetalle.valor=objeto.valor
                 nuevoDetalle.iditem=itemnuevo.id
                 DBSession.add(nuevoDetalle)
+                
+                
+            """Copia las relaciones """
+            relaciones = DBSession.query(RelacionItem.idItem1,RelacionItem.idItem2).filter((RelacionItem.idItem2==itemeditado.id) | (RelacionItem.idItem1==itemeditado.id)).all()
+            longitud = len(relaciones)
+            newRelation=RelacionItem()
+            for x in range(longitud):
+                log.debug('Creando relaciones')
+                if int(itemeditado.id) == int(relaciones[x][0]):
+                    newRelation.idItem1=int(itemnuevo.id)
+                    newRelation.idItem2=relaciones[x][1]
+                    DBSession.add(newRelation)
+                    #self.provider.create(RelacionItem, params=newRelation)
+                elif int(itemeditado.id) == int(relaciones[x][1]):
+                    newRelation.idItem1=relaciones[x][0]
+                    newRelation.idItem2=int(itemnuevo.id)
+                    DBSession.add(newRelation)
+                
+        
                 
             """Realiza copia de los adjuntos"""
             adjuntositemeditado=DBSession.query(Adjuntos).filter_by(idItem=itemeditado.id).all()
