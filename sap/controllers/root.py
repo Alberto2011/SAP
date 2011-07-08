@@ -240,8 +240,9 @@ class RootController(BaseController):
         """Copia las relaciones """
         relaciones = DBSession.query(RelacionItem.idItem1,RelacionItem.idItem2).filter((RelacionItem.idItem2==itemeditado.id) | (RelacionItem.idItem1==itemeditado.id)).all()
         longitud = len(relaciones)
-        newRelation=RelacionItem()
+        
         for x in range(longitud):
+            newRelation=RelacionItem()
             log.debug('Creando relaciones')
             if int(itemeditado.id) == int(relaciones[x][0]):
                 newRelation.idItem1=int(itemnuevo.id)

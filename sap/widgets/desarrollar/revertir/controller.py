@@ -4,6 +4,7 @@ from sap.model import DeclarativeBase, metadata, DBSession
 from sap.model.item import Item
 from sap.model.detalleitem import DetalleItem
 from sap.model.adjuntos import Adjuntos
+from sap.model.relacion_item import RelacionItem
 
 
 from tg import expose, flash, redirect, tmpl_context
@@ -217,7 +218,34 @@ class CrudRestController(RestController):
             itemnuevoadjunto.idItem=item2.id
             itemnuevoadjunto.filename=adj.filename
             itemnuevoadjunto.filecontent=adj.filecontent
-            DBSession.add(itemnuevoadjunto)        
+            DBSession.add(itemnuevoadjunto)
+            
+            
+        
+        """Copia las relaciones """
+        relaciones = DBSession.query(RelacionItem.idItem1,RelacionItem.idItem2).filter((RelacionItem.idItem2==item.id) | (RelacionItem.idItem1==item.id)).all()
+        longitud = len(relaciones)
+        
+        for x in range(longitud):
+            newRelation=RelacionItem()
+            
+            if int(item.id) == int(relaciones[x][0]):
+                newRelation.idItem1=int(item2.id)
+                newRelation.idItem2=relaciones[x][1]
+                DBSession.add(newRelation)
+                #self.provider.create(RelacionItem, params=newRelation)
+            elif int(item.id) == int(relaciones[x][1]):
+                newRelation.idItem1=relaciones[x][0]
+                newRelation.idItem2=int(item2.id)
+                DBSession.add(newRelation)
+        
+        
+        
+        
+        
+        
+        
+               
         
         
         redirect('../'+'../item/?fid=' + str(item.idFase))
