@@ -8,6 +8,8 @@ import pylons
 from tgext.crud.decorators import registered_validate, register_validators, catch_errors
 from sprox.providerselector import ProviderTypeSelector
 from sap.model.auth import *
+from sap.model.detalleitem import DetalleItem
+from sap.model.adjuntos import Adjuntos
 
 errors = ()
 try:
@@ -307,6 +309,32 @@ class CrudRestController(RestController):
     @expose()
     @registered_validate(error_handler=new)
     def post(self, *args, **kw):
+        
+  
+        """Se crea un nuevo item"""
+        itemeditado=DBSession.query(Item).filter_by(id=kw['idItem1']).first()
+        itemnuevo=Item()
+        itemnuevo.version=itemeditado.version + 1
+        itemnuevo.idTipoDeItem=itemeditado.idTipoDeItem
+        itemnuevo.idFase=itemeditado.idFase
+        itemnuevo.idLineaBase=itemeditado.idLineaBase
+        itemnuevo.fechaCreacion=itemeditado.fechaCreacion
+        itemnuevo.nrohistorial=itemeditado.nrohistorial
+        itemnuevo.ultimaversion=1
+        itemeditado.ultimaversion=0
+        itemnuevo.estado='modificado'
+        itemnuevo.complejidad=itemeditado.complejidad
+        itemnuevo.nombre=itemeditado.nombre
+        DBSession.add(itemnuevo)
+        DBSession.flush()
+        
+        """-------------------------"""
+        
+        
+        """ Crea las nuevas relaciones"""
+        
+        kw['idItem1']=itemnuevo.id
+        """ Se crea las relaciones"""
         ids=kw['idItem2']
         longitud=len(kw['idItem2'])
         for indice in range(longitud):
@@ -318,15 +346,61 @@ class CrudRestController(RestController):
         for indice in range(longitud):
             kw['idItem2']=ids[indice] 
             self.provider.create(self.model, params=kw)
-        #########
-        #if len(kw['idproyec']) > 0:
-        #   raise redirect('./?pid='+kw['idproyec'])
-        #else:
-        #    if len(kw['idFase']) > 0:
-        #        raise redirect('./?fid='+kw['idFase'])
-        #    else:
-        #        raise redirect('./')
-        #########
+    
+        
+        """Realiza copia de los valores de los atributos especificos"""
+            
+        atributoeditado=DBSession.query(DetalleItem).filter_by(iditem=itemeditado.id).all()
+            
+        for objeto in atributoeditado:
+            nuevoDetalle=DetalleItem()
+            nuevoDetalle.tipo=objeto.tipo
+            nuevoDetalle.nombrecampo=objeto.nombrecampo
+            nuevoDetalle.valor=objeto.valor
+            nuevoDetalle.iditem=itemnuevo.id
+            DBSession.add(nuevoDetalle)
+                
+        """Realiza copia de los adjuntos"""
+        adjuntositemeditado=DBSession.query(Adjuntos).filter_by(idItem=itemeditado.id).all()
+        
+        for adj in adjuntositemeditado:
+            itemnuevoadjunto=Adjuntos()
+            itemnuevoadjunto.idItem=itemnuevo.id
+            itemnuevoadjunto.filename=adj.filename
+            itemnuevoadjunto.filecontent=adj.filecontent
+            DBSession.add(itemnuevoadjunto)
+        
+        
+        """Copia las relaciones """
+        #itemnuevo=DBSession.query(Item.id).filter_by(nrohistorial=nuevo['nrohistorial'], ultimaversion=1).first()
+        relaciones = DBSession.query(RelacionItem.idItem1,RelacionItem.idItem2).filter((RelacionItem.idItem2==itemeditado.id) | (RelacionItem.idItem1==itemeditado.id)).all()
+        
+        longitud = len(relaciones)
+        
+        
+        for x in range(longitud):
+            newRelation = {}
+            if int(itemeditado.id) == int(relaciones[x][0]):
+                newRelation['idItem1']=int(itemnuevo.id)
+                newRelation['idItem2']=relaciones[x][1]
+                self.provider.create(RelacionItem, params=newRelation)
+            elif int(itemeditado.id) == int(relaciones[x][1]):
+                newRelation['idItem1']=relaciones[x][0]
+                newRelation['idItem2']=int(itemnuevo.id)
+                self.provider.create(RelacionItem, params=newRelation)
+
+            
+            
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         raise redirect('./?iid='+str(kw['idItem1']))
     @expose()
     @registered_validate(error_handler=edit)
