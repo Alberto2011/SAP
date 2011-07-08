@@ -113,7 +113,7 @@ class User(DeclarativeBase):
     display_name = Column(Unicode(255))
 
     _password = Column('password', Unicode(80),
-                       info={'rum': {'field':'Password'}})
+                       info={'rum': {'field':'Password'}}, nullable=False)
 
     created = Column(DateTime, default=datetime.now)
 

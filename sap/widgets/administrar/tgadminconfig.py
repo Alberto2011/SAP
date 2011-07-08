@@ -1,5 +1,5 @@
 import inspect
-from tg import expose, redirect
+from tg import expose, redirect, flash
 from tw.forms import TextField, PasswordField
 from tgext.crud import CrudRestController
 from tgext.crud.decorators import registered_validate
@@ -10,6 +10,7 @@ from sprox.fillerbase import EditFormFiller
 from sprox.formbase import FilteringSchema
 from formencode.validators import FieldsMatch
 from sap.model import DBSession, metadata
+from sap.model.auth import User
 
 dojo_loaded = False
 
@@ -118,16 +119,12 @@ class UserControllerConfig(CrudRestControllerConfig):
         if not getattr(self, 'new_form_type', None):
             class NewForm(AddRecordForm):
                 __entity__ = self.model
-                __require_fields__     = [user_name_field, email_field,'groups']
+                #__require_fields__     = [user_name_field, email_field,'password', 'groups']
                 #__omit_fields__        = [password_field, 'created', '_password']
-                __omit_fields__        = ['created']
                 __hidden_fields__      = [user_id_field]
-                
-                _password = PasswordField('verify_password')
                 
                 #__field_order__        = [user_name_field, email_field, display_name_field, 'groups']
                 __omit_fields__        = ['created', '_password',display_name_field]
-                __hidden_fields__      = [user_id_field]
                 #__field_order__        = [user_name_field, email_field, display_name_field, password, verify_password, 'groups']
                 __field_order__        = [user_name_field, email_field, 'password', 'verify_password', 'groups']
                 
@@ -161,7 +158,102 @@ class UserControllerConfig(CrudRestControllerConfig):
 
             self.provider.update(self.model, params=kw)
             redirect('../')
+        
+        @expose()
+        def post(self, *args, **kw):
+            log.debug(kw)
+            if(kw['user_name'].__eq__('')):
+                flash('El campo \"User Name\" no puede ser vacio', 'error')
+                redirect('./new')
+            
+            if(kw['email_address'].__eq__('')):
+                flash('El campo \"Email Address\" no puede ser vacio', 'error')
+                redirect('./new')
+            elif not self.emailvalido(kw['email_address']):
+                flash('Direccion de correo no valida', 'error')
+                redirect('./new')
+                
+            if kw['password'].__eq__(''):
+                flash('El Password no puede ser vacio', 'error')
+                redirect('./new')
+            elif not (kw['password'].__eq__(kw['verify_password'])):
+                flash('\"Password\" y \"Verify Password\" deben ser iguales', 'error')
+                redirect('./new')
+            
+            if (User.by_user_name(kw['user_name'])) != None:
+                flash('El usuario \"%s\" ya existe' %kw['user_name'], 'error')
+                redirect('./new')
+                
+            if (User.by_email_address(kw['email_address'])) != None:
+                flash('El correo \"%s\" ya existe' %kw['email_address'], 'error')
+                redirect('./new')
+                
+            kw['display_name'] = kw['user_name']
+            
+            try:
+                kw['groups']
+            except:
+                flash('Debe asignar un grupo para el nuevo usuario', 'error')
+                redirect('./new')
 
+            self.provider.create(self.model, params=kw)
+            raise redirect('./')
+        
+        def emailvalido (self, email):
+            if not (email.__contains__('@')):
+                return False
+            elif not (email.__contains__('.')):
+                return False
+            elif email.count('.') > 1:
+                return False
+            elif email.count('@') > 1:
+                return False
+            
+            arroba = email.find('@')
+            punto = email.find('.')
+            
+            if  arroba > punto:
+                return False
+            elif arroba == 0:
+                return False
+            elif punto == len(email) - 1:
+                return False
+            elif arroba == punto - 1:
+                return False
+            
+            letrasnumeros = 'abcdefghijklmnopqrstuvwxyz0123456789'
+            letrasnumerosguion = 'abcdefghijklmnopqrstuvwxyz0123456789_'
+            letras = 'abcdefghijklmnopqrstuvwxyz'
+            
+            antesarroba, sep, despuesarroba = email.partition('@')
+            entre_arroba_punto, sep, despuespunto = despuesarroba.partition('.')
+            
+            antesarroba= antesarroba.lower()
+            entre_arroba_punto= entre_arroba_punto.lower()
+            despuespunto= despuespunto.lower()
+            longitud = len(despuespunto)
+            
+            if not (letras.__contains__(antesarroba[0])):
+                return False
+            elif not (letrasnumeros.__contains__(antesarroba[len(antesarroba)-1])):
+                return False
+            
+            if longitud == 1:
+                return False
+            
+            for c in range(len(antesarroba)-2):
+                if not (letrasnumerosguion.__contains__(antesarroba[c+1])):
+                    return False
+            
+            for c in range(len(entre_arroba_punto)):
+                if not (letras.__contains__(entre_arroba_punto[c])):
+                    return False
+                
+            for c in range(len(despuespunto)):
+                if not (letras.__contains__(despuespunto[c])):
+                    return False
+            
+            return True
 
 
 class GroupControllerConfig(CrudRestControllerConfig):

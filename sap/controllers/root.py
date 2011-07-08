@@ -400,9 +400,12 @@ class RootController(BaseController):
         
         g=self.grafo_de_relaciones(relaciones)
         subg= pydot.Subgraph('', rank='same')
+        nrofase = 1
         
         for fase in nodosporfase:
             subg= pydot.Subgraph('', rank='same')
+            subg.add_node(pydot.Node('Fase '+ str(nrofase),label='Fase '+ str(nrofase) ,color='white'))
+            nrofase = nrofase + 1
             for nodo in fase:
                 subg.add_node(pydot.Node(str(nodo),label=str(nodo),color='blue')) 
                 
@@ -428,7 +431,7 @@ class RootController(BaseController):
             else:
                 dst = node_prefix + str(edge[1])
     
-            e = pydot.Edge( src, dst )
+            e = pydot.Edge( src, dst, label="     " )
             graph.add_edge(e)
             
         return graph
