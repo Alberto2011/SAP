@@ -36,7 +36,7 @@ log = logging.getLogger(__name__)
 
 class RevertirTable(TableBase):
     __model__ = Item
-    __omit_fields__ = ['id']
+    __omit_fields__ = ['id', 'nrohistorial','ultimaversion', 'idTipoDeItem']
 revertir_table = RevertirTable(DBSession) 
 
 

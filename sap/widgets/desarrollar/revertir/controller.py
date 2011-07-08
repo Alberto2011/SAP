@@ -5,7 +5,7 @@ from sap.model.item import Item
 from sap.model.detalleitem import DetalleItem
 from sap.model.adjuntos import Adjuntos
 from sap.model.relacion_item import RelacionItem
-
+from sap.model.fase import Fase
 
 from tg import expose, flash, redirect, tmpl_context
 from tg.decorators import without_trailing_slash, with_trailing_slash
@@ -131,6 +131,29 @@ class CrudRestController(RestController):
             values = self.table_filler.get_value(**kw)
         else:
             values = []
+        
+        longitud=len(values)
+        for fila in range(longitud):
+            complejidad = int(values[fila]['complejidad'])
+            values[fila]['idFase'] = DBSession.query(Fase.nombre).filter_by(id = values[fila]['idFase']).first()
+            lineabase = values[fila]['idLineaBase']
+            
+            if lineabase != 'None':
+                values[fila]['idLineaBase'] = DBSession.query(LineaBase.nombre)\
+                                                .filter_by(id=lineabase).first()
+            else:
+                values[fila]['idLineaBase'] = 'Sin linea base'
+            
+            if (complejidad == 1):
+                values[fila]['complejidad'] = 'Muy baja (1)'
+            elif (complejidad == 2):
+                values[fila]['complejidad'] = 'Baja (2)'
+            elif (complejidad == 3):
+                values[fila]['complejidad'] = 'Media (3)'
+            elif (complejidad == 4):
+                values[fila]['complejidad'] = 'Alta (4)'
+            else:
+                values[fila]['complejidad'] = 'Muy alta (5)'
 
         tmpl_context.widget = self.table
         return dict(model=self.model.__name__, value_list=values)
