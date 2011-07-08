@@ -1,6 +1,9 @@
 """
 """
 from sap.widgets.desarrollar.item.item import *
+from sap.model.detalleitem import DetalleItem
+from sap.model.adjuntos import Adjuntos
+
 
 from tw.forms import (TableForm, CalendarDatePicker, Spacer,HiddenField, SingleSelectField, TextField, TextArea,SubmitButton)
 from sap.model.campos import Campos
@@ -269,7 +272,7 @@ class CrudRestController(RestController):
                 kw[pk] = args[i]
         
         
-        """Extrae todos los valores del item a modificar, para luego crear un nuevo tipo"""
+        """Extrae todos los valores del item a modificar, para luego crear un nuevo item"""
         
         valoresItem=DBSession.query(Item.version ,Item.idTipoDeItem ,Item.idFase ,Item.idLineaBase ,Item.fechaCreacion ,Item.nrohistorial,Item.ultimaversion).filter_by(id=kw['id']).first()
         
@@ -285,7 +288,34 @@ class CrudRestController(RestController):
         nuevo['estado']='modificado'
         nuevo['complejidad']=kw['complejidad']
         nuevo['nombre']=kw['nombre']
-        self.provider.create(self.model, params=nuevo)
+        itemnuevo=self.provider.create(self.model, params=nuevo)
+        
+        """Realiza copia de los valores de los atributos especificos"""
+        itemeditado=DBSession.query(Item).filter_by(id=kw['id']).first()    
+        atributoeditado=DBSession.query(DetalleItem).filter_by(iditem=itemeditado.id).all()
+            
+        for objeto in atributoeditado:
+            nuevoDetalle=DetalleItem()
+            nuevoDetalle.tipo=objeto.tipo
+            nuevoDetalle.nombrecampo=objeto.nombrecampo
+            nuevoDetalle.valor=objeto.valor
+            nuevoDetalle.iditem=itemnuevo.id
+            DBSession.add(nuevoDetalle)
+                
+        """Realiza copia de los adjuntos"""
+        adjuntositemeditado=DBSession.query(Adjuntos).filter_by(idItem=itemeditado.id).all()
+        
+        for adj in adjuntositemeditado:
+            itemnuevoadjunto=Adjuntos()
+            itemnuevoadjunto.idItem=itemnuevo.id
+            itemnuevoadjunto.filename=adj.filename
+            itemnuevoadjunto.filecontent=adj.filecontent
+            DBSession.add(itemnuevoadjunto)
+        """-----------------------------"""
+        
+        
+        
+        
         
         itemeditado=DBSession.query(Item).filter_by(id=kw['id']).first()
         itemeditado.ultimaversion=0

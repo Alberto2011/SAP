@@ -310,7 +310,7 @@ class ItemController(CrudRestController):
     model = Item
     table = item_table
     table_filler = item_table_filler
-    #new_form = None
+
     edit_filler = item_edit_filler
     edit_form = item_edit_form
     
@@ -326,6 +326,7 @@ class ItemController(CrudRestController):
         return result
         #return super(ItemController, self).get_all(*args, **kw)
     
+
     @without_trailing_slash
     #@expose('tgext.crud.templates.new')
     @expose('sap.templates.desarrollar.item.new')
@@ -470,3 +471,4 @@ class ItemController(CrudRestController):
         else:
             return False
         
+

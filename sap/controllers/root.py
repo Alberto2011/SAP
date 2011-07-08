@@ -3,13 +3,9 @@
 import pydot
 from tg import expose, flash, require, url, request, redirect,response
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
-#from tgext.admin.tgadminconfig import TGAdminConfig
 from sap.widgets.administrar.tgadminconfig import TGAdminConfig
-#from tgext.admin.controller import AdminController
 from sap.widgets.administrar.controllerUserGroupPremission import AdminController 
-
 from repoze.what import predicates
-
 from sap.lib.base import BaseController
 from sap.model import DBSession, metadata
 from sap import model
@@ -240,11 +236,33 @@ class RootController(BaseController):
         
  
         
-        """try:
-            userfile = DBSession.query(Adjuntos).filter_by(id=fileid).one()
-        except:
-            return redirect("../../adjuntos/new/?iid="+str(itemnuevo.id) )
-        #DBSession.delete(userfile)"""
+        
+        """Copia las relaciones """
+        relaciones = DBSession.query(RelacionItem.idItem1,RelacionItem.idItem2).filter((RelacionItem.idItem2==itemeditado.id) | (RelacionItem.idItem1==itemeditado.id)).all()
+        longitud = len(relaciones)
+        
+        for x in range(longitud):
+            newRelation=RelacionItem()
+            log.debug('Creando relaciones')
+            if int(itemeditado.id) == int(relaciones[x][0]):
+                newRelation.idItem1=int(itemnuevo.id)
+                newRelation.idItem2=relaciones[x][1]
+                DBSession.add(newRelation)
+                #self.provider.create(RelacionItem, params=newRelation)
+            elif int(itemeditado.id) == int(relaciones[x][1]):
+                newRelation.idItem1=relaciones[x][0]
+                newRelation.idItem2=int(itemnuevo.id)
+                DBSession.add(newRelation)
+        
+        
+
+
+
+
+
+
+
+
         return redirect("../../adjuntos/new/?iid="+str(itemnuevo.id))
 
 
@@ -390,6 +408,7 @@ class RootController(BaseController):
     """------------------------------ Fin Calculo de Impacto--------------------------- """
     
     def dibujar(self):
+
         """Dibuja un grafo dirigido a partir de una matriz de relaciones
         y un matriz de nodos"""
         
