@@ -247,12 +247,12 @@ class ItemForm(TableForm):
         fields = [
         
         
-        TextField('nombre', label_text='Nombre'),
+        TextField('nombre', label_text='Nombre', disabled=True),
    	    Spacer(),
 		HiddenField('idFase', label_text='idFase'),
         HiddenField('version', label_text='version'),
         HiddenField('estado', label_text='estado'),
-        SingleSelectField('complejidad', options=comlejidadoptions, label_text='complejidad'),
+        SingleSelectField('complejidad', options=comlejidadoptions, label_text='Complejidad'),
         Spacer(),
         #CalendarDatePicker('fechaCreacion', date_format='%d-%m-%y'),
         #Spacer(),
@@ -280,7 +280,7 @@ class ItemEditForm(EditableForm):
     __model__ = Item
     __disable_fields__=['nombre']
     comlejidadoptions= [(1, 'Muy Baja (1)'), (2, 'Baja (2)'), (3, 'Media (3)'), (4, 'Alta (4)'), (5, 'Muy Alta (5)')]
-    __field_widgets__ = {'nombre':TextField('nombre', label_text='Nombre'),
+    __field_widgets__ = {'nombre':HiddenField('nombre', label_text='Nombre'),
                          'complejidad':SingleSelectField('complejidad', options=comlejidadoptions, label_text='complejidad')}
     
     __omit_fields__ = ['id','idTipoDeItem','idFase','fechaCreacion','idLineaBase','version', 'nrohistorial','ultimaversion', 'estado']
@@ -311,7 +311,6 @@ class ItemController(CrudRestController):
     model = Item
     table = item_table
     table_filler = item_table_filler
-
     edit_filler = item_edit_filler
     edit_form = item_edit_form
     
@@ -340,7 +339,7 @@ class ItemController(CrudRestController):
     
         comlejidadoptions= [(1, 'Muy Baja (1)'), (2, 'Baja (2)'), (3, 'Media (3)'), (4, 'Alta (4)'), (5, 'Muy Alta (5)')]
         
-        campos = [TextField('nombre', label_text='Nombre'),
+        campos = [TextField('nombre', label_text='Nombre', disabled=True),
                   Spacer(),
                   HiddenField('idFase', label_text='idFase'),
                   HiddenField('version', label_text='version'),
@@ -373,7 +372,16 @@ class ItemController(CrudRestController):
         """El tipo de Item elegido es extraido para  asignar su nombre al item"""
         tipo_item_elegido=DBSession.query(TipoDeItem).filter_by(id=tid).first()
         
-        return dict(value={'idTipoDeItem':tid, 'idFase':fid, 'nombre': tipo_item_elegido.nombre + '-' + str(tipo_item_elegido.nrogeneracion + 1) },model=self.model.__name__)
+        nrogenerado = tipo_item_elegido.nrogeneracion + 1
+        
+        if int(nrogenerado) < 10:
+            nombreitem=tipo_item_elegido.nombre + '-00' + str(nrogenerado)
+        elif int(nrogenerado) < 100:
+            nombreitem=tipo_item_elegido.nombre + '-0' + str(nrogenerado)
+        else:
+            nombreitem=tipo_item_elegido.nombre + '-' + str(nrogenerado)
+            
+        return dict(value={'idTipoDeItem':tid, 'idFase':fid, 'nombre':nombreitem },model=self.model.__name__)
     
     @expose()
     def post(self, *args, **kw):
@@ -418,18 +426,25 @@ class ItemController(CrudRestController):
         elif str(fase.estado).__eq__('lineaBaseTotal'):
             fase.estado = 'lineaBaseParcial'
         
+        tipo_item_elegido=DBSession.query(TipoDeItem).filter_by(id=kw['idTipoDeItem']).first()
         kw1= {}
-        kw1['nombre'] = kw['nombre']
+        nrogenerado = tipo_item_elegido.nrogeneracion + 1
+        
+        if int(nrogenerado) < 10:
+            nombreitem=tipo_item_elegido.nombre + '-00' + str(nrogenerado)
+        elif int(nrogenerado) < 100:
+            nombreitem=tipo_item_elegido.nombre + '-0' + str(nrogenerado)
+        else:
+            nombreitem=tipo_item_elegido.nombre + '-' + str(nrogenerado)
+            
+        kw1['nombre'] = nombreitem
         kw1['idTipoDeItem'] = kw['idTipoDeItem']
         kw1['idFase'] = kw['idFase']
         kw1['complejidad'] = kw['complejidad']
         kw1['nrohistorial'] = kw['nrohistorial']
         
         itemnuevo = self.provider.create(self.model, params=kw1)
-        
-        tipo_item_elegido=DBSession.query(TipoDeItem).filter_by(id=kw1['idTipoDeItem']).first()
         tipo_item_elegido.nrogeneracion= tipo_item_elegido.nrogeneracion+1
-        
         
         for ct in campotipo:
             detalle = {}

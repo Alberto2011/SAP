@@ -34,7 +34,7 @@ log = logging.getLogger(__name__)
 
 class TipoDeItemTable(TableBase):
     __model__ = TipoDeItem
-    __omit_fields__ = ['id']
+    __omit_fields__ = ['id', 'nrogeneracion']
 tipodeitem_table = TipoDeItemTable(DBSession) 
 
 
@@ -116,10 +116,10 @@ tipodeitem_add_form = TipoDeItemForm('create_tipodeitem_form')
         
 class TipoDeItemEditForm(EditableForm):
     __model__ = TipoDeItem
-    __field_widgets__ = {'nombre':TextField('nombre', label_text='Nombre'),
+    __field_widgets__ = {'nombre':HiddenField('nombre', label_text='Nombre'),
             'descripcion':TextField('descripcion', label_text='Descripcion'),}
     
-    __omit_fields__ = ['id', 'idFase']
+    __omit_fields__ = ['id', 'idFase', 'nrogeneracion']
 
 
 tipodeitem_edit_form = TipoDeItemEditForm(DBSession)

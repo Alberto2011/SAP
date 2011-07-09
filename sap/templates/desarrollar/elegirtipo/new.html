@@ -15,9 +15,6 @@
 
 <h1>Elegir Tipo de Item</h1>
 
-
-
-
 <div py:replace="tmpl_context.form(child_args=dict(tipoitem=dict(options=tipoitem_options)))">Input Form</div>
 <?python
 from sap.model import DeclarativeBase, metadata, DBSession
@@ -41,9 +38,6 @@ from tw.api import WidgetsList
 
 class ElegirTipoForm(TableForm):
     
-    
-    
-    
     class fields(WidgetsList):
         tipoitem_options = [x for x in (DBSession.query(TipoDeItem.id, TipoDeItem.nombre).filter_by(idFase=21))]
 
@@ -51,14 +45,11 @@ class ElegirTipoForm(TableForm):
         #submit =HiddenField()
         
 create_elegirtipo_form = ElegirTipoForm("create_elegirtipo_form")
+
 #<a href='../item/new/?tid=${tid}'><input type="submit" name="aceptar" value="Aceptar"/></a>
 ?>
 
-
-
-
-
-
+<a href='/item/?fid=${fid}'><input type="button" name="cancelar" value="Atrás"/></a>
 
 </body>
 </html>

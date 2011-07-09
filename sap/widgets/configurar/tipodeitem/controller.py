@@ -10,6 +10,7 @@ import pylons
 from tgext.crud.decorators import registered_validate, register_validators, catch_errors
 from sprox.providerselector import ProviderTypeSelector
 from sap.model.auth import *
+from sap.model.fase import Fase
 errors = ()
 try:
     from sqlalchemy.exc import IntegrityError, DatabaseError, ProgrammingError
@@ -132,6 +133,9 @@ class CrudRestController(RestController):
             values = self.table_filler.get_value(**kw)
         else:
             values = []
+            
+        for value in values:
+            value['idFase'] = DBSession.query(Fase.nombre).filter_by(id=value['idFase']).first()
 
         tmpl_context.widget = self.table
         return dict(model=self.model.__name__, value_list=values)
@@ -149,7 +153,7 @@ class CrudRestController(RestController):
         value = self.edit_filler.get_value(kw)
         return dict(value=value,model=self.model.__name__)
 
-    @expose('tgext.crud.templates.edit')
+    @expose('sap.templates.configurar.tipodeitem.edit')
     def edit(self, *args, **kw):
         """Display a page to edit the record."""
         tmpl_context.widget = self.edit_form

@@ -187,7 +187,7 @@ class CrudRestController(RestController):
         value = self.edit_filler.get_value(kw)
         return dict(value=value,model=self.model.__name__)
 
-    @expose('tgext.crud.templates.edit')
+    @expose('sap.templates.desarrollar.item.edit')
     #@expose("sap.templates.desarrollar.item.get_all")
     def edit(self, *args, **kw):
         """Display a page to edit the record."""
@@ -313,10 +313,6 @@ class CrudRestController(RestController):
             itemnuevoadjunto.filecontent=adj.filecontent
             DBSession.add(itemnuevoadjunto)
         """-----------------------------"""
-        
-        
-        
-        
         
         itemeditado=DBSession.query(Item).filter_by(id=kw['id']).first()
         itemeditado.ultimaversion=0
