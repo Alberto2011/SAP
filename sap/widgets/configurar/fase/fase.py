@@ -47,7 +47,7 @@ class FaseTableFiller(TableFiller):
             value = '<div><a class="edit_link" href="'+pklist+'/edit" style="text-decoration:none">edit</a></div>'
         elif str(estado[0]).__eq__("iniciado"):
             value = '<div><div><a class="edit_link" href="'+pklist+'/edit" style="text-decoration:none">edit</a>'\
-            '<div><a class="loginlogout" href="/tipodeitem/?fid='+pklist+ '">CrearTipoItem</a></div><br/>'\
+            '<div><a class="loginlogout" href="/tipodeitem/?fid='+pklist+ '">TiposItem</a></div><br/>'\
             '<div><a class="loginlogout" href="/importartipodeitem/new/?fid='+pklist+ '">ImportarTipoItem</a></div><br/>'\
             '</div></div>'
         

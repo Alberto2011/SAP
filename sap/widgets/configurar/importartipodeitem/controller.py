@@ -183,14 +183,13 @@ class CrudRestController(RestController):
         """Display a page to show a new record."""
         tmpl_context.widget = self.new_form
         
-        log.debug('fid: %s' %fid)
+        
         log.debug('kwwwwnew: %s' %kw)
-        longitud=len(kw)
-        log.debug('longitud: %s' %longitud)
         
         
+        longitud=len(kw)        
         if longitud==0:
-            tiposdeitems=DBSession.query(TipoDeItem.id,TipoDeItem.nombre).all()
+            tiposdeitems=DBSession.query(TipoDeItem.id,TipoDeItem.nombre).filter(TipoDeItem.idFase != fid).all()
             return dict(value={"fid": fid}, model=self.model.__name__ ,importar_options=tiposdeitems)
         else:
            
@@ -204,9 +203,8 @@ class CrudRestController(RestController):
             for indice in range(longitud):
                 """Hace una copia del tipo de item cambiando el idFase """
                 idTipo= ids[indice]
-                log.debug('idTipo: %s' %idTipo)
                 tipo=DBSession.query(TipoDeItem).filter_by(id=idTipo).first()
-                log.debug('tipoooo: %s' %tipo)
+                
                 
                 tipocopia=TipoDeItem()
                 tipocopia.nombre=tipo.nombre
@@ -217,7 +215,7 @@ class CrudRestController(RestController):
                 
                 
                 NuevoTipoItem=DBSession.query(TipoDeItem.id).filter_by(nombre=tipocopia.nombre, descripcion=tipocopia.descripcion, idFase=fid).first()
-                log.debug('NuevoTipoItem: %s' %NuevoTipoItem)
+                
                 
                 #Se copia los los atributos especificos del tipo de item
                 campos=DBSession.query(Campos).filter_by(idTipoDeItem=idTipo).all()
