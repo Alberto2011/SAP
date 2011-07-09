@@ -340,7 +340,7 @@ class ItemController(CrudRestController):
     
         comlejidadoptions= [(1, 'Muy Baja (1)'), (2, 'Baja (2)'), (3, 'Media (3)'), (4, 'Alta (4)'), (5, 'Muy Alta (5)')]
         
-        campos = [TextField('nombre', label_text='Nombre'),
+        campos = [TextField('nombre', label_text='Nombre', disabled=True),
                   Spacer(),
                   HiddenField('idFase', label_text='idFase'),
                   HiddenField('version', label_text='version'),
