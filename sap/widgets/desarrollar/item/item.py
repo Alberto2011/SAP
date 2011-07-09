@@ -243,6 +243,7 @@ class ItemForm(TableForm):
                 
         __require_fields__=['nombre']
         
+        
         fields = [
         
         
@@ -332,6 +333,8 @@ class ItemController(CrudRestController):
     @expose('sap.templates.desarrollar.item.new')
     def new(self,tid=None ,*args, **kw):
         """Display a page to show a new record."""
+        
+
             
         fid= DBSession.query(TipoDeItem.idFase).filter_by(id=tid).first()
     
@@ -364,7 +367,13 @@ class ItemController(CrudRestController):
         #tmpl_context.widget = self.new_form
         
         tmpl_context.widget = TableForm('create_table_form', fields=campos, submit_text='Guardar')
-        return dict(value={'idTipoDeItem':tid, 'idFase':fid,  },model=self.model.__name__)
+        
+        
+        
+        """El tipo de Item elegido es extraido para  asignar su nombre al item"""
+        tipo_item_elegido=DBSession.query(TipoDeItem).filter_by(id=tid).first()
+        
+        return dict(value={'idTipoDeItem':tid, 'idFase':fid, 'nombre': tipo_item_elegido.nombre + '-' + str(tipo_item_elegido.nrogeneracion + 1) },model=self.model.__name__)
     
     @expose()
     def post(self, *args, **kw):
@@ -417,6 +426,10 @@ class ItemController(CrudRestController):
         kw1['nrohistorial'] = kw['nrohistorial']
         
         itemnuevo = self.provider.create(self.model, params=kw1)
+        
+        tipo_item_elegido=DBSession.query(TipoDeItem).filter_by(id=kw1['idTipoDeItem']).first()
+        tipo_item_elegido.nrogeneracion= tipo_item_elegido.nrogeneracion+1
+        
         
         for ct in campotipo:
             detalle = {}
