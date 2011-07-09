@@ -11,6 +11,7 @@ import pylons
 from tgext.crud.decorators import registered_validate, register_validators, catch_errors
 from sprox.providerselector import ProviderTypeSelector
 from sap.model.auth import *
+from sap.model.tipodeitem import TipoDeItem
 errors = ()
 try:
     from sqlalchemy.exc import IntegrityError, DatabaseError, ProgrammingError
@@ -128,9 +129,11 @@ class CrudRestController(RestController):
             values = self.table_filler.get_value(**kw)
         else:
             values = []
+            
+        fid = DBSession.query(TipoDeItem.idFase).filter_by(id=values[0]['idTipoDeItem']).first()
 
         tmpl_context.widget = self.table
-        return dict(model=self.model.__name__, value_list=values)
+        return dict(model=self.model.__name__, value_list=values, fid = fid[0])
 
     @expose('tgext.crud.templates.get_one')
     @expose('json')
