@@ -334,8 +334,10 @@ class CrudRestController(RestController):
 
         ids=[]
         ids.append(int(itemnuevo[0]))
-        self.recorrerArbol(ids, int(itemnuevo[0]))
+        self.recorrerArbolAtras(ids, int(itemnuevo[0]))
+        self.recorrerArbolAdelante(ids, int(itemnuevo[0]))
         ids.remove(int(itemnuevo[0]))
+        log.debug(ids)
         longitud = len(ids)
 
         for x in range(longitud):
@@ -378,36 +380,56 @@ class CrudRestController(RestController):
             
         redirect('../' +'../item/?fid=' + str(nuevo['idFase']))
     
-    """------------------------------ Recorrer Arbol-----------------------------------
+    """---------------------- Recorrer Arbol Atras -------------------------------------
     Uso:
         self.recorrerArbol (ids, iid)
         ids: un vector que contiene primeramente al nodo inicial
         iid: nodo inicial
         Todos los nodos del arbol quedaran guardados en ids---------------------------"""
-    def recorrerArbol (self, *args):
+    def recorrerArbolAtras (self, *args):
         ids = args[0]
-        iid = args[1]
+        itemraiz = args[1]
 
-        """-------------Obtiene de la BD la tabla relacion completa----------------"""
-        relaciones = DBSession.query(RelacionItem.idItem1,RelacionItem.idItem2).filter((RelacionItem.idItem2==iid) | (RelacionItem.idItem1==iid)).all()
+        """-------------Obtiene de la BD las relaciones actuales del nodo en cuestion---"""
+        relaciones = DBSession.query(RelacionItem.idItem1,RelacionItem.idItem2).\
+                        filter((RelacionItem.idItem1==itemraiz)).all()
         """------------------------------------------------------------------------"""
         
-        """-----------Obtiene la cantidad de filas(cantidad de relaciones) ---------"""
-        longitud=len(relaciones)
-        """ ------------------------------------------------------------------------"""
+        for relacion in relaciones:
+            itemrelacion = DBSession.query(Item).filter_by(id=relacion.idItem2).first()
+            
+            if itemrelacion.ultimaversion == 1:
+                if (ids.count(itemrelacion.id) < 1):
+                        ids.append(itemrelacion.id)
+                self.recorrerArbolAtras(ids, itemrelacion.id)
+
+    """------------------- Fin Recorrer Arbol Atras -----------------------------------"""
+    
+    """-------------------- Recorrer Arbol Adelante -------------------------------------
+    Uso:
+        self.recorrerArbol (ids, iid)
+        ids: un vector que contiene primeramente al nodo inicial
+        iid: nodo inicial
+        Todos los nodos del arbol quedaran guardados en ids---------------------------"""
+    def recorrerArbolAdelante (self, *args):
+        ids = args[0]
+        itemraiz = args[1]
+
+        """-------------Obtiene de la BD las relaciones actuales del nodo en cuestion---"""
+        relaciones = DBSession.query(RelacionItem.idItem1,RelacionItem.idItem2).\
+                        filter((RelacionItem.idItem2==itemraiz)).all()
+        """------------------------------------------------------------------------"""
         
-        for x in range (longitud):
-            #relaciones[x][0] = idItem1
-            #relaciones[x][1] = idItem2
-            if (int(iid) == int(relaciones[x][0])):
-                if (ids.count(int(relaciones[x][1])) < 1):
-                    ids.append(int(relaciones[x][1]))
-                    self.recorrerArbol(ids, int(relaciones[x][1]))
-            elif (int(iid) == int(relaciones[x][1])):
-                if (ids.count(int(relaciones[x][0])) < 1):
-                    ids.append(int(relaciones[x][0]))
-                    self.recorrerArbol(ids, int(relaciones[x][0]))
-    """------------------------------ Fin Recorrer Arbol-----------------------------------"""
+        for relacion in relaciones:
+            itemrelacion = DBSession.query(Item).filter_by(id=relacion.idItem1).first()
+            
+            if itemrelacion.ultimaversion == 1:
+                if (ids.count(itemrelacion.id) < 1):
+                        ids.append(itemrelacion.id)
+
+                self.recorrerArbolAdelante(ids, itemrelacion.id)
+        
+    """---------------------- Fin Recorrer Arbol Adelante -----------------------------"""
 
     @expose()
     def post_delete(self, *args, **kw):

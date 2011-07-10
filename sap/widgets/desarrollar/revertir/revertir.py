@@ -73,15 +73,18 @@ class RevertirTableFiller(TableFiller):
         desc = kw.get('desc', False)
         #objs = DBSession.query(self.__entity__).filter_by(idFase=1).all()
         
+        log.debug('kwkw: %s' %kw)
+        
         if len(kw) > 0:
-            log.debug('kwkw: %s' %kw)
             if len(kw) > 1:
                 #objs = DBSession.query(self.__entity__).filter((Fase.idproyec==kw['pid']) & (Fase.nombre.ilike('%'+str(kw['buscar'])+'%'))).all()
+
                 if kw['buscar']=="":
                     objs = DBSession.query(self.__entity__).filter_by(nrohistorial=kw['hid'], ultimaversion=0).all()
                 else:
                     objs = DBSession.query(self.__entity__).filter((Item.nrohistorial==kw['hid'])& (Item.ultimaversion==0) & (Item.version ==kw['buscar'])).all()
                 
+
             else:
                 
                 objs = DBSession.query(self.__entity__).filter_by(nrohistorial=kw['hid'], ultimaversion=0).all()
@@ -144,10 +147,6 @@ class RevertirController(CrudRestController):
         result=super(RevertirController, self).get_all(*args, **kw)
         result['hid']=hid
         #log.debug('resultGetAll=%s' %result)
-        log.debug('args')
-        log.debug(args)
-        log.debug(result)
-        
         
         return result
         #return super(RevertirController, self).get_all(*args, **kw)
