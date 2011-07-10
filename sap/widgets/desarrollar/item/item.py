@@ -214,10 +214,11 @@ class ItemTableFiller(TableFiller):
                     
                     
             if len(kw) > 1:
-                objs = DBSession.query(self.__entity__).filter((Fase.idproyec==kw['pid']) & (Fase.nombre.ilike('%'+str(kw['buscar'])+'%'))).all()
+                #objs = DBSession.query(self.__entity__).filter((Fase.idproyec==kw['pid']) & (Fase.nombre.ilike('%'+str(kw['buscar'])+'%'))).all()
                 objs = DBSession.query(self.__entity__).\
                     filter((Item.idFase==kw['fid']) &
                         (Item.ultimaversion==1) &
+                        (Item.nombre.ilike('%'+str(kw['buscar'])+'%'))&
                         (Item.estado!="borrado")).order_by(Item.nrohistorial).all()    
                 
                 

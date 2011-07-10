@@ -1,4 +1,5 @@
 from sap.model import DeclarativeBase, metadata, DBSession
+from sap.model.proyecto import Proyecto 
 from tg.decorators import without_trailing_slash, with_trailing_slash, paginate
 from tw.core import WidgetsList
 from tw.forms import CheckBoxList,TableForm, TextField, CalendarDatePicker, SingleSelectField, TextArea
@@ -63,6 +64,32 @@ class ProyectoTableFiller(TableFiller):
         '</div></div>'
         
         return value
+    
+    def _do_get_provider_count_and_objs(self ,**kw):
+        limit = kw.get('limit', None)
+        offset = kw.get('offset', None)
+        order_by = kw.get('order_by', None)
+        desc = kw.get('desc', False)
+        
+        log.debug(kw)
+        
+        if len(kw) > 0:
+            #if len(kw) > 1:
+            objs = DBSession.query(self.__entity__).filter((Proyecto.nombre.ilike('%'+str(kw['buscar'])+'%'))).all()
+            #else:
+            #    objs = DBSession.query(self.__entity__).filter_by(idproyec=kw['pid']).all()
+        else:
+            #objs = DBSession.query(self.__entity__).filter_by(idproyec=kw[result['pid']]).all()
+            objs = DBSession.query(self.__entity__).all()
+        count = len(objs)
+        self.__count__ = count
+        return count, objs    
+
+    
+    
+    
+    
+    
 
     __model__ = Proyecto
 proyecto_table_filler = ProyectoTableFiller(DBSession)
