@@ -1,0 +1,5 @@
+campos	campos-module.html
+campos.mapper_campos	campos-module.html#mapper_campos
+campos.tabla_campos	campos-module.html#tabla_campos
+campos.Campos	campos.Campos-class.html
+campos.Campos.__init__	campos.Campos-class.html#__init__

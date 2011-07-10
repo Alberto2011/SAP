@@ -1,0 +1,6 @@
+fase	fase-module.html
+fase.mapper_fase	fase-module.html#mapper_fase
+fase.tabla_fase	fase-module.html#tabla_fase
+fase.Fase	fase.Fase-class.html
+fase.Fase.estado	fase.Fase-class.html#estado
+fase.Fase.__init__	fase.Fase-class.html#__init__

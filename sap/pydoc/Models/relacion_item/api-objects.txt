@@ -1,0 +1,5 @@
+relacion_item	relacion_item-module.html
+relacion_item.tabla_relacion_item	relacion_item-module.html#tabla_relacion_item
+relacion_item.mapper_relacion_item	relacion_item-module.html#mapper_relacion_item
+relacion_item.RelacionItem	relacion_item.RelacionItem-class.html
+relacion_item.RelacionItem.__init__	relacion_item.RelacionItem-class.html#__init__
