@@ -283,7 +283,7 @@ class RootController(BaseController):
         else:
             tipoitem = [x for x in (DBSession.query(TipoDeItem.id, TipoDeItem.nombre).filter_by(idFase=kw['fid']))]
             
-            return dict(tipoitem_options=tipoitem)
+            return dict(tipoitem_options=tipoitem, fid=kw['fid'])
         
 #############################################################
     @expose('sap.templates.desarrollar.abrirlineabase.new')
@@ -410,23 +410,33 @@ class RootController(BaseController):
     def dibujar(self):
 
         """Dibuja un grafo dirigido a partir de una matriz de relaciones
-        y un matriz de nodos"""
+        y una matriz de nodos"""
         
         relaciones=[(4,1), (6,1), (4,2), (5,2), (4,3), \
                (5,3), (6,3), (7,6), (8,9), (8,7)]
+        nombre={1:'Item 1', 2:'Item 2', 3:'Item 3', 4:'Item 4', 5:'Item 5', 6:'Item 6',\
+                7:'Item 7', 8:'Item 8', 9:'Item 9'}
+        
+        complejidad={1:'3', 2:'2', 3:'4', 4:'1', 5:'3', 6:'5',\
+                7:'3', 8:'2', 9:'5'}
         
         nodosporfase=[(1,2,3), (4,5,6,7), (8,9)]
+        nombresfases=['Fase 1', 'Fase 2', 'Fase 3']
         
         g=self.grafo_de_relaciones(relaciones)
         subg= pydot.Subgraph('', rank='same')
-        nrofase = 1
+        nrofase = 0
         
         for fase in nodosporfase:
             subg= pydot.Subgraph('', rank='same')
-            subg.add_node(pydot.Node('Fase '+ str(nrofase),label='Fase '+ str(nrofase) ,color='white'))
+            subg.add_node(pydot.Node(nombresfases[nrofase],label=nombresfases[nrofase],\
+                                     color='white'))
             nrofase = nrofase + 1
+            
             for nodo in fase:
-                subg.add_node(pydot.Node(str(nodo),label=str(nodo),color='blue')) 
+                subg.add_node(pydot.Node(str(nodo),\
+                            label=str(nombre[nodo])+"\nPeso: "+str(complejidad[nodo]),\
+                            color='blue')) 
                 
             g.add_subgraph(subg)
         

@@ -182,10 +182,6 @@ class CrudRestController(RestController):
         """Display a page to show a new record."""
         tmpl_context.widget = self.new_form
         
-        """Cambio de estado del item que se quiere relacionar"""
-        item = DBSession.query(Item).filter_by(id = iid).first()
-        item.estado = 'modificado'
-        
         """Fase a la cual pertenece el item que se quiere relacionar"""
         faseActual = DBSession.query(Item.idFase).filter_by(id = iid).one()
         """Proyecto al cual pertenece la fase que hallamos en la linea anterior"""
@@ -226,7 +222,8 @@ class CrudRestController(RestController):
         longFase = len(allFase)
         
         """Todos los item de la fase actual"""
-        listaActual = DBSession.query(Item.id, Item.nombre).filter_by(idFase=faseActual, ultimaversion=1).all()
+        listaActual = DBSession.query(Item.id, Item.nombre).\
+                    filter_by(idFase=faseActual, ultimaversion=1, estado='aprobado').all()
         
         """Todas las relaciones existentes"""
         relaciones = DBSession.query(RelacionItem.idItem1, RelacionItem.idItem2).all()
@@ -236,7 +233,9 @@ class CrudRestController(RestController):
         listaAnterior=[]
         #Se comprueba que exista una fase anterior
         if (longFase > 0):
-            listaAnterior = DBSession.query(Item.id, Item.nombre).filter_by(idFase=allFase[longFase-1].id, ultimaversion=1).all()
+            listaAnterior = DBSession.query(Item.id, Item.nombre).\
+            filter(Item.idFase==allFase[longFase-1].id and Item.ultimaversion==1\
+                   and Item.idLineaBase != None and Item.estado.__eq__('aprobado')).all()
 
         #Eliminar los item ya relacionados de la lista de fase anterior
         for x in range(longRel):

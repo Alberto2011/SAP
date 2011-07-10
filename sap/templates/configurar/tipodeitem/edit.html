@@ -3,14 +3,7 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
 <xi:include href="master.html" />
-<title>${tmpl_context.title} - New ${model}</title>
-
-
-
-
-
-
-
+<title>${tmpl_context.title} - Edit ${model}</title>
 <head>
 <style>
 #menu_items {
@@ -20,24 +13,25 @@
 </style>
 </head>
 <body class="tundra">
+    
   <div style="height:0px;"> &nbsp; </div>
-
+  
   <div style="float:left; padding-left:0px;">
         <ul id="menu_items" py:if="hasattr(tmpl_context, 'menu_items')">
-            <li py:for="lower, item in sorted(tmpl_context.menu_items.iteritems())"><a href="../${lower}s/">$item.__name__</a></li>
+            <li py:for="lower, item in sorted(tmpl_context.menu_items.iteritems())">
+              <a href="${'../' * (1 + value_of('pk_count', 1))}${lower}s/">$item.__name__</a>
+            </li>
        </ul>
   </div>
-  
-  <div style="float:left;" class="crud_add">
-    <h2 style="margin-top:1px;">Nuevo $model</h2>
+  <div style="float:left;" class="crud_edit">
     
-    ${XML(tmpl_context.widget(value=value, action='../'))}
-     
+    <h2 style="margin-top:1px;">Editar $model</h2>
+     ${XML(tmpl_context.widget(value=value, action='./'))}
   </div>
-  <div style="height:0px; clear:both;"> &nbsp; </div>
-
-
-  <a href='/elegirtipo/?fid=${value["idFase"][0]}'><input type="button" name="cancelar" value="Atrás"/></a>
   
+  <div style="height:0px; clear:both;"> &nbsp; </div>
+  
+   <a href='/tipodeitem/?fid=${value["idFase"]}'><input type="button" name="cancelar" value="Atrás"/></a>
+
 </body>
 </html>
