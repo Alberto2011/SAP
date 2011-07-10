@@ -27,9 +27,7 @@
 			from sap.model.fase import Fase
 			pid=DBSession.query(Fase.idproyec).filter_by(id=fid).first()
 		?>
-  		
-      
-      
+       
       <div align="right">
 		  <form name="form1" method="_do_get_provider_count_and_objs">
 			<a href='/fasedesarrollo/?pid=${pid[0]}'><img src="${tg.url('/images/boton_atras.gif')}" align="left" style="border-style:none"/></a>

@@ -388,17 +388,6 @@ class CrudRestController(RestController):
                 newRelation['idItem1']=relaciones[x][0]
                 newRelation['idItem2']=int(itemnuevo.id)
                 self.provider.create(RelacionItem, params=newRelation)
-
-            
-            
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         raise redirect('./?iid='+str(kw['idItem1']))

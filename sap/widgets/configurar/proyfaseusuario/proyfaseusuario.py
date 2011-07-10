@@ -100,8 +100,6 @@ class UserProyTableFiller(TableFiller):
                         if objetos != None:
                             if objs.count(objetos) < 1:
                                 objs.append(objetos)
-                
-                log.debug(objs)
             else:
                 objs = DBSession.query(self.__entity__).filter_by(idProyecto=kw['pid']).all()
         else:
