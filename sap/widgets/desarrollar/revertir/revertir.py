@@ -74,10 +74,15 @@ class RevertirTableFiller(TableFiller):
         #objs = DBSession.query(self.__entity__).filter_by(idFase=1).all()
         
         if len(kw) > 0:
-            
-            objs = DBSession.query(self.__entity__).filter_by(nrohistorial=kw['hid'], ultimaversion=0).all()
-            
+            if len(kw) > 1:
+                #objs = DBSession.query(self.__entity__).filter((Fase.idproyec==kw['pid']) & (Fase.nombre.ilike('%'+str(kw['buscar'])+'%'))).all()
+                
+                objs = DBSession.query(self.__entity__).filter((Item.nrohistorial==kw['hid'])& (Item.ultimaversion==0) & (Item.nombre.ilike('%'+str(kw['buscar'])+'%'))).all()
+            else:
+                
+                objs = DBSession.query(self.__entity__).filter_by(nrohistorial=kw['hid'], ultimaversion=0).all()
         else:
+            
             objs = DBSession.query(self.__entity__).all()
 
         count = len(objs)

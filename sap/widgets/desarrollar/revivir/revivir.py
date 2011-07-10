@@ -1,3 +1,4 @@
+from sap.model import DeclarativeBase, metadata, DBSession
 from repoze.what.predicates import *
 from sap.model.campos import Campos
 from sap.model import DeclarativeBase, metadata, DBSession
@@ -75,7 +76,11 @@ class RevivirTableFiller(TableFiller):
         
         if len(kw) > 0:
             
-             objs = DBSession.query(self.__entity__).filter_by(idFase=kw['fid'],estado="borrado").all()
+             if len(kw) > 1:
+                 objs = DBSession.query(self.__entity__).filter((Item.idFase==kw['fid'])& (Item.estado=="borrado") & (Item.nombre.ilike('%'+str(kw['buscar'])+'%'))).all()
+             else:
+                 objs = DBSession.query(self.__entity__).filter_by(idFase=kw['fid'],estado="borrado").all()
+             #objs = DBSession.query(self.__entity__).filter((Item.nrohistorial==kw['hid'])& (Item.ultimaversion==0) & (Item.nombre.ilike('%'+str(kw['buscar'])+'%'))).all()
              #objs = DBSession.query(self.__entity__).all()
         else:
             objs = DBSession.query(self.__entity__).all()
