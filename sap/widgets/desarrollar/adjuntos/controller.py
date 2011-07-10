@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+""" 
+@author José Chavéz.
+@author Alberto Capli.
+@author Nora González.
+"""
+
+
+
 import copy
 from sap.model.detalleitem import DetalleItem
 from sap.model.relacion_item import RelacionItem

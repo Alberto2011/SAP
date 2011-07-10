@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+""" 
+@author José Chavéz.
+@author Alberto Capli.
+@author Nora González.
+"""
+
 from repoze.what.predicates import *
 #from tw.forms.validators import Int, NotEmpty, DateConverter
 from sap.model.campos import Campos
