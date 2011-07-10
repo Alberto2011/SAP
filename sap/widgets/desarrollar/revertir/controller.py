@@ -157,6 +157,10 @@ class CrudRestController(RestController):
                 values[fila]['complejidad'] = 'Muy alta (5)'
 
         tmpl_context.widget = self.table
+        
+        
+        
+        
         return dict(model=self.model.__name__, value_list=values)
 
     @expose('tgext.crud.templates.get_one')
@@ -262,15 +266,6 @@ class CrudRestController(RestController):
                 newRelation.idItem1=relaciones[x][0]
                 newRelation.idItem2=int(item2.id)
                 DBSession.add(newRelation)
-        
-        
-        
-        
-        
-        
-        
-               
-        
         
         redirect('../'+'../item/?fid=' + str(item.idFase))
 
