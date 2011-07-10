@@ -1,0 +1,8 @@
+adjuntos	adjuntos-module.html
+adjuntos.Adjuntos	adjuntos.Adjuntos-class.html
+adjuntos.Adjuntos.filename	adjuntos.Adjuntos-class.html#filename
+adjuntos.Adjuntos.filecontent	adjuntos.Adjuntos-class.html#filecontent
+adjuntos.Adjuntos.__tablename__	adjuntos.Adjuntos-class.html#__tablename__
+adjuntos.Adjuntos.idItem	adjuntos.Adjuntos-class.html#idItem
+adjuntos.Adjuntos.id	adjuntos.Adjuntos-class.html#id
+adjuntos.Adjuntos.__init__	adjuntos.Adjuntos-class.html#__init__

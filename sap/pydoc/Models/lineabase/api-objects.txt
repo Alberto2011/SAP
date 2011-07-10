@@ -1,0 +1,5 @@
+lineabase	lineabase-module.html
+lineabase.mapper_archivos	lineabase-module.html#mapper_archivos
+lineabase.tabla_linea_base	lineabase-module.html#tabla_linea_base
+lineabase.LineaBase	lineabase.LineaBase-class.html
+lineabase.LineaBase.__init__	lineabase.LineaBase-class.html#__init__

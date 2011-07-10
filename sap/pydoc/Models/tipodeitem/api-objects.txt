@@ -1,0 +1,5 @@
+tipodeitem	tipodeitem-module.html
+tipodeitem.mapper_tipo_de_item	tipodeitem-module.html#mapper_tipo_de_item
+tipodeitem.tabla_tipodeitem	tipodeitem-module.html#tabla_tipodeitem
+tipodeitem.TipoDeItem	tipodeitem.TipoDeItem-class.html
+tipodeitem.TipoDeItem.__init__	tipodeitem.TipoDeItem-class.html#__init__
