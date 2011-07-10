@@ -1,4 +1,8 @@
-"""
+# -*- coding: utf-8 -*-
+""" Clase RootController
+@author José Chavéz.
+@author Alberto Capli.
+@author Nora González.
 """
 from sap.model import DeclarativeBase, metadata, DBSession
 

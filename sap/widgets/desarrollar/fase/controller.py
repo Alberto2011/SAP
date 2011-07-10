@@ -1,4 +1,8 @@
-"""
+# -*- coding: utf-8 -*-
+""" 
+@author José Chavéz.
+@author Alberto Capli.
+@author Nora González.
 """
 from tg import expose, flash, redirect, tmpl_context
 from tg.decorators import without_trailing_slash, with_trailing_slash
