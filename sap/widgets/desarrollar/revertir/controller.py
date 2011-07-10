@@ -6,6 +6,7 @@ from sap.model.detalleitem import DetalleItem
 from sap.model.adjuntos import Adjuntos
 from sap.model.relacion_item import RelacionItem
 from sap.model.fase import Fase
+from sap.model.lineabase import LineaBase
 
 from tg import expose, flash, redirect, tmpl_context
 from tg.decorators import without_trailing_slash, with_trailing_slash

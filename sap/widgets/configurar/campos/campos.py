@@ -13,6 +13,7 @@ from tw.forms import (TableForm, CalendarDatePicker, Spacer, SingleSelectField,H
 from sap.widgets.configurar.campos.controller import CrudRestController
 #from sap.controllers.root import *
 from sap.model.campos import Campos
+from sap.model.tipodeitem import TipoDeItem
 from tg import expose
 import logging 
 log = logging.getLogger(__name__)
@@ -131,6 +132,9 @@ class CamposController(CrudRestController):
         kw['tid']=tid
         result=super(CamposController, self).get_all(*args, **kw)
         result['tid']=tid
+        fid = DBSession.query(TipoDeItem.idFase).filter_by(id=tid).first()
+        result['fid'] = fid[0]
+        log.debug(result)
         return result
 
 
