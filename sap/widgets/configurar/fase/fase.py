@@ -59,9 +59,13 @@ class FaseTableFiller(TableFiller):
         order_by = kw.get('order_by', None)
         desc = kw.get('desc', False)
         
+        log.debug(kw)
+        
         if len(kw) > 0:
-            
-            objs = DBSession.query(self.__entity__).filter_by(idproyec=kw['pid']).all()
+            if len(kw) > 1:
+                objs = DBSession.query(self.__entity__).filter((Fase.idproyec==kw['pid']) & (Fase.nombre.ilike('%'+str(kw['buscar'])+'%'))).all()
+            else:
+                objs = DBSession.query(self.__entity__).filter_by(idproyec=kw['pid']).all()
         else:
             #objs = DBSession.query(self.__entity__).filter_by(idproyec=kw[result['pid']]).all()
             objs = DBSession.query(self.__entity__).all()
