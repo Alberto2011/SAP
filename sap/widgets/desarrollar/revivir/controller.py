@@ -1,5 +1,7 @@
 """
 """
+from sap.model.item import Item
+from sap.model import DeclarativeBase, metadata, DBSession
 from tg import expose, flash, redirect, tmpl_context
 from tg.decorators import without_trailing_slash, with_trailing_slash
 from tg.controllers import RestController
@@ -167,9 +169,11 @@ class CrudRestController(RestController):
         self.provider.update(self.model, params=kw)
         #log.debug("Prueba edit= %s" %value)
         
-       
+        fid= DBSession.query(Item.idFase).filter_by(id=kw[pk]).first()
         #raise redirect('/revivir/?fid='+str(kw['fid']))
-        raise redirect('/revivir/?fid=21')
+        log.debug('kww: %s' %fid)
+        
+        raise redirect('/revivir/?fid=' + str(fid[0]))
         
         
         

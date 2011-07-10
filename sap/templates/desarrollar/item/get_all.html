@@ -22,6 +22,25 @@
     <div style="float:left; width:80%">
       <h1 style="margin-top:1px;">Listas de $model</h1>
       <div style="margin:1ex 0; width:90%">
+		<?python
+			from sap.model import DeclarativeBase, metadata, DBSession
+			from sap.model.fase import Fase
+			pid=DBSession.query(Fase.idproyec).filter_by(id=fid).first()
+		?>
+  		
+      
+      
+      <div align="right">
+		  <form name="form1" method="_do_get_provider_count_and_objs">
+			<a href='/fasedesarrollo/?pid=${pid[0]}'><img src="${tg.url('/images/boton_atras.gif')}" align="left" style="border-style:none"/></a>
+		    <input type="text" name="buscar"/>
+		    <input type="image" src="${tg.url('/images/buscador_icono.gif')}" width="30"/>
+		    <input type="hidden" name="fid" value="${fid}"/>
+		  </form>
+		</div>
+      
+      
+      
       
       <?python
       
@@ -44,12 +63,7 @@
     </div>
   </div>
   <div style="clear:both;"/>
-  <?python
-   	from sap.model import DeclarativeBase, metadata, DBSession
-	from sap.model.fase import Fase
-	pid=DBSession.query(Fase.idproyec).filter_by(id=fid).first()
-  ?>
-  <a href='/fasedesarrollo/?pid=${pid[0]}'><input type="button" name="cancelar" value="Atrás"/></a>
+  
 
 </body>
 </html>

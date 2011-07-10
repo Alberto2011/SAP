@@ -29,7 +29,7 @@ log = logging.getLogger(__name__)
 
 class FaseTable(TableBase):
     __model__ = Fase
-    __omit_fields__ = ['id']
+    __omit_fields__ = ['id', 'idproyec']
 fase_table = FaseTable(DBSession) 
 
 
@@ -72,6 +72,8 @@ class FaseTableFiller(TableFiller):
         order_by = kw.get('order_by', None)
         desc = kw.get('desc', False)
         
+        log.debug('kwwww: %s' %kw)
+        
         if len(kw) > 0:
             """Se extrae el id del usuario quien inicio sesion"""
             idUsuario= [x for x in DBSession.query(User.user_id).filter_by(user_name=request.identity['repoze.who.userid'])]
@@ -82,10 +84,17 @@ class FaseTableFiller(TableFiller):
             fases=[]
             longitud=len(idsfases)
             
-            for y in range(longitud):
-                fases.append(DBSession.query(self.__entity__).filter_by(id=idsfases[y]).first())
             
+            if len(kw) > 1:
+                for y in range(longitud):
+                    visualizar=DBSession.query(self.__entity__).filter((Fase.id==idsfases[y])  & (Fase.nombre.ilike('%'+str(kw['buscar'])+'%'))).first()
+                    if visualizar != None:
+                        fases.append(visualizar)
+            else:
+                for y in range(longitud):
+                    fases.append(DBSession.query(self.__entity__).filter_by(id=idsfases[y]).first())
             objs=fases
+            
         else:
             objs = DBSession.query(self.__entity__).all()
         count = len(objs)
