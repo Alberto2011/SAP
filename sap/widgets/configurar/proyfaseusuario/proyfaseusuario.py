@@ -31,7 +31,7 @@ log = logging.getLogger(__name__)
 
 class UserProyTable(TableBase):
     __model__ =  ProyFaseUsuario
-    __omit_fields__ = ['id']
+    __omit_fields__ = ['id', 'idProyecto']
 userproy_table = UserProyTable(DBSession) 
 
 
@@ -58,9 +58,50 @@ class UserProyTableFiller(TableFiller):
         offset = kw.get('offset', None)
         order_by = kw.get('order_by', None)
         desc = kw.get('desc', False)
+        
+        log.debug(kw)
+        
         if len(kw) > 0:
             if len(kw) > 1:
-                objs = DBSession.query(self.__entity__).filter((ProyFaseUsuario.idProyecto==kw['pid']) & (ProyFaseUsuario.nombre.ilike('%'+str(kw['buscar'])+'%'))).all()
+                objs=[]
+                obj=[]
+                fases = DBSession.query(Fase.id, Fase.nombre).filter(Fase.nombre.ilike('%'+str(kw['buscar'])+'%')).all()
+                permisos = DBSession.query(Permission.permission_id, Permission.permission_name).filter(Permission.permission_name.ilike('%'+str(kw['buscar'])+'%')).all()
+                usuarios = DBSession.query(User.user_id, User.user_name).filter(User.user_name.ilike('%'+str(kw['buscar'])+'%')).all()
+                
+                for fase in fases:
+                    obj = DBSession.query(self.__entity__).\
+                            filter((ProyFaseUsuario.idProyecto==kw['pid']) &\
+                                   (ProyFaseUsuario.idFase==fase.id)).all()
+                                                
+                    for objetos in obj:
+                        if objetos != None:
+                            if objs.count(objetos) < 1:
+                                objs.append(objetos)
+                          
+                obj=[]  
+                for permiso in permisos:
+                    obj = DBSession.query(self.__entity__).\
+                            filter((ProyFaseUsuario.idProyecto==kw['pid']) &\
+                                   (ProyFaseUsuario.idPermiso==permiso.permission_id)).all()
+                                   
+                    for objetos in obj:
+                        if objetos != None:
+                            if objs.count(objetos) < 1:
+                                objs.append(objetos)
+
+                obj=[]  
+                for usuario in usuarios:
+                    obj = DBSession.query(self.__entity__).\
+                            filter((ProyFaseUsuario.idProyecto==kw['pid']) &\
+                                   (ProyFaseUsuario.iduser==usuario.user_id)).all()
+                                   
+                    for objetos in obj:
+                        if objetos != None:
+                            if objs.count(objetos) < 1:
+                                objs.append(objetos)
+                
+                log.debug(objs)
             else:
                 objs = DBSession.query(self.__entity__).filter_by(idProyecto=kw['pid']).all()
         else:
