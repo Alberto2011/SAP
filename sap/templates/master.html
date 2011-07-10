@@ -29,13 +29,10 @@
 
 		<li py:if="tg.predicates.has_permission('manage')" id="admin" class="loginlogout"><a href="${tg.url('/admin')}">Administrar</a></li>
         <li py:if="tg.predicates.has_permission('manage')" id="admin" class="loginlogout"><a href="${tg.url('/proyectos')}">Proyecto</a></li>
-		<li py:if="tg.predicates.has_permission('configurar') or
-                   tg.predicates.has_permission('manage')" 
-			       id="admin" class="loginlogout"><a href="${tg.url('/proyectoconfig')}">Configuracion</a></li>
+		<li py:if="tg.predicates.has_permission('configurar')" id="admin" class="loginlogout"><a href="${tg.url('/proyectoconfig')}">Configuracion</a></li>
 
         <li py:if="tg.predicates.has_permission('desarrollar') or 
-                   tg.predicates.has_permission('configurar') or
-                   tg.predicates.has_permission('manage')" 
+                   tg.predicates.has_permission('configurar')"
 			       id="admin" class="loginlogout"><a href="${tg.url('/proyectodesarrollo')}">Desarrollar</a></li>
  				
 		
