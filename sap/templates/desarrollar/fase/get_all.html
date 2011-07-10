@@ -21,7 +21,17 @@
     </div>
     <div style="float:left; width:80%">
       <h1 style="margin-top:1px;">Lista de $model</h1>
-      <div style="margin:1ex 0; width:90%">
+      <div style="margin:1ex 0; width:120%">
+      
+      <div align="right">
+		  <form name="form1" method="_do_get_provider_count_and_objs">
+		    <input type="text" name="buscar"/>
+		    <input type="image" src="${tg.url('/images/buscador_icono.gif')}" width="30"/>
+		    <input type="hidden" name="pid" value="${pid}"/>
+		  </form>
+		</div>
+      
+      
         
         <span py:if="value_list" style="margin-left:2em" py:content="tmpl_context.paginators.value_list.pager(link='../%s/'%model.lower())"/>
       </div>
