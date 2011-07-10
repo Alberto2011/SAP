@@ -253,19 +253,8 @@ class RootController(BaseController):
                 newRelation.idItem1=relaciones[x][0]
                 newRelation.idItem2=int(itemnuevo.id)
                 DBSession.add(newRelation)
-        
-        
-
-
-
-
-
-
-
 
         return redirect("../../adjuntos/new/?iid="+str(itemnuevo.id))
-
-
 
     """-----------------------------------FIN ADJUNTOS----------------------------- """ 
 
