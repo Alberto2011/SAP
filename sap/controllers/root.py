@@ -385,58 +385,125 @@ class RootController(BaseController):
     @expose('sap.templates.desarrollar.item.dibujar')
     def calcularimpacto(self,**kw):
         """ids[] es un vector en el cual se guardaran los 'id' """
-        self.dibujar()
         ids=[]
-        ids.append(int(kw['iid']))
+        itemraiz = DBSession.query(Item).filter_by(id=kw['iid']).first()
+        ids.append(itemraiz)
         impacto = 0
+        relacionesTotal = []
         
-        self.recorrerArbol(ids, int(kw['iid']))
+        self.recorrerArbolAtras(ids, itemraiz, relacionesTotal)
+        self.recorrerArbolAdelante(ids, itemraiz, relacionesTotal)
         
-        idsLong = len(ids)
+        for item in ids:
+            complejidad = int(item.complejidad)
+            impacto = impacto + complejidad
         
-        for x in range(idsLong):
-            complejidad = DBSession.query(Item.complejidad).filter_by(id = int(ids[x]), ultimaversion=1).first()
-            if complejidad != None:
-                impacto = impacto + complejidad[0]
+        nodosporfase = []
         
-        fid=DBSession.query(Item.idFase, Item.nombre).filter_by(id=kw['iid']).first()
-        flash("El impacto de modificar el item \"" +str(fid[1]) +"\" es: "+ str(impacto))
+        while len(ids) != 0:
+            aux = []
+            
+            for item in ids:
+                if ids[0].idFase == item.idFase:
+                    aux.append(item)
+                    
+            for item in aux:
+                ids.remove(item)
+                
+            nodosporfase.append(aux)
+        
+        self.dibujar(relacionesTotal, nodosporfase, itemraiz)
+        
+        flash("El impacto de modificar el item \"" +itemraiz.nombre+"\" es: "+ str(impacto))
         #redirect('/item/?fid='+str(fid[0]))
-        return dict(link={'url':'/item/?fid='+str(fid[0])})
+        return dict(link={'url':'/item/?fid='+str(itemraiz.idFase)})
     
+    """---------------------- Recorrer Arbol Atras -------------------------------------
+    Uso:
+        self.recorrerArbol (ids, iid)
+        ids: un vector que contiene primeramente al nodo inicial
+        iid: nodo inicial
+        Todos los nodos del arbol quedaran guardados en ids---------------------------"""
+    def recorrerArbolAtras (self, *args):
+        ids = args[0]
+        itemraiz = args[1]
+        relacionesTotal = args[2]
+
+        """-------------Obtiene de la BD las relaciones actuales del nodo en cuestion---"""
+        relaciones = DBSession.query(RelacionItem.idItem1,RelacionItem.idItem2).\
+                        filter((RelacionItem.idItem1==itemraiz.id)).all()
+        """------------------------------------------------------------------------"""
+        
+        for relacion in relaciones:
+            itemrelacion = DBSession.query(Item).filter_by(id=relacion.idItem2).first()
+            
+            if itemrelacion.ultimaversion == 1:
+                if (ids.count(itemrelacion) < 1):
+                        ids.append(itemrelacion)
+                        
+                if (relacionesTotal.count(relacion) < 1):
+                    relacionesTotal.append(relacion)
+                self.recorrerArbolAtras(ids, itemrelacion, relacionesTotal)
+
+    """------------------- Fin Recorrer Arbol Atras -----------------------------------"""
+    
+    """-------------------- Recorrer Arbol Adelante -------------------------------------
+    Uso:
+        self.recorrerArbol (ids, iid)
+        ids: un vector que contiene primeramente al nodo inicial
+        iid: nodo inicial
+        Todos los nodos del arbol quedaran guardados en ids---------------------------"""
+    def recorrerArbolAdelante (self, *args):
+        ids = args[0]
+        itemraiz = args[1]
+        relacionesTotal = args[2]
+
+        """-------------Obtiene de la BD las relaciones actuales del nodo en cuestion---"""
+        relaciones = DBSession.query(RelacionItem.idItem1,RelacionItem.idItem2).\
+                        filter((RelacionItem.idItem2==itemraiz.id)).all()
+        """------------------------------------------------------------------------"""
+        
+        for relacion in relaciones:
+            itemrelacion = DBSession.query(Item).filter_by(id=relacion.idItem1).first()
+            
+            if itemrelacion.ultimaversion == 1:
+                if (ids.count(itemrelacion) < 1):
+                        ids.append(itemrelacion)
+                        
+                if (relacionesTotal.count(relacion) < 1):
+                    relacionesTotal.append(relacion)
+                self.recorrerArbolAdelante(ids, itemrelacion, relacionesTotal)
+        
+    """---------------------- Fin Recorrer Arbol Adelante -----------------------------"""
     
     """------------------------------ Fin Calculo de Impacto--------------------------- """
     
-    def dibujar(self):
+    def dibujar(self, *args):
 
         """Dibuja un grafo dirigido a partir de una matriz de relaciones
         y una matriz de nodos"""
         
-        relaciones=[(4,1), (6,1), (4,2), (5,2), (4,3), \
-               (5,3), (6,3), (7,6), (8,9), (8,7)]
-        nombre={1:'Item 1', 2:'Item 2', 3:'Item 3', 4:'Item 4', 5:'Item 5', 6:'Item 6',\
-                7:'Item 7', 8:'Item 8', 9:'Item 9'}
-        
-        complejidad={1:'3', 2:'2', 3:'4', 4:'1', 5:'3', 6:'5',\
-                7:'3', 8:'2', 9:'5'}
-        
-        nodosporfase=[(1,2,3), (4,5,6,7), (8,9)]
-        nombresfases=['Fase 1', 'Fase 2', 'Fase 3']
+        relaciones=args[0]
+        nodosporfase=args[1]
+        itemraiz=args[2]
         
         g=self.grafo_de_relaciones(relaciones)
-        subg= pydot.Subgraph('', rank='same')
-        nrofase = 0
         
         for fase in nodosporfase:
             subg= pydot.Subgraph('', rank='same')
-            subg.add_node(pydot.Node(nombresfases[nrofase],label=nombresfases[nrofase],\
-                                     color='white'))
-            nrofase = nrofase + 1
+            nombreFase = DBSession.query(Fase.nombre).filter_by(id=fase[0].idFase).first()
+            subg.add_node(pydot.Node(nombreFase[0],label=nombreFase[0],\
+                                    color='white'))
             
             for nodo in fase:
-                subg.add_node(pydot.Node(str(nodo),\
-                            label=str(nombre[nodo])+"\nPeso: "+str(complejidad[nodo]),\
-                            color='blue')) 
+                if nodo == itemraiz:
+                    subg.add_node(pydot.Node(nodo.id,\
+                            label=str(nodo.nombre)+"\nPeso: "+str(nodo.complejidad),\
+                            color='PaleGreen3', style='filled'))
+                else:
+                     subg.add_node(pydot.Node(nodo.id,\
+                            label=str(nodo.nombre)+"\nPeso: "+str(nodo.complejidad),\
+                            color='NavajoWhite1', style='filled'))
                 
             g.add_subgraph(subg)
         
@@ -460,41 +527,10 @@ class RootController(BaseController):
             else:
                 dst = node_prefix + str(edge[1])
     
-            e = pydot.Edge( src, dst, label="     " )
+            e = pydot.Edge( src, dst)
             graph.add_edge(e)
             
         return graph
-    
-    """------------------------------ Recorrer Arbol-----------------------------------
-    Uso:
-        self.recorrerArbol (ids, iid)
-        ids: un vector que contiene primeramente al nodo inicial
-        iid: nodo inicial
-        Todos los nodos del arbol quedaran guardados en ids---------------------------"""
-    def recorrerArbol (self, *args):
-        ids = args[0]
-        iid = args[1]
-
-        """-------------Obtiene de la BD la tabla relacion completa----------------"""
-        relaciones = DBSession.query(RelacionItem.idItem1,RelacionItem.idItem2).filter((RelacionItem.idItem2==iid) | (RelacionItem.idItem1==iid)).all()
-        """------------------------------------------------------------------------"""
-        
-        """-----------Obtiene la cantidad de filas(cantidad de relaciones) ---------"""
-        longitud=len(relaciones)
-        """ ------------------------------------------------------------------------"""
-        
-        for x in range (longitud):
-            #relaciones[x][0] = idItem1
-            #relaciones[x][1] = idItem2
-            if (int(iid) == int(relaciones[x][0])):
-                if (ids.count(int(relaciones[x][1])) < 1):
-                    ids.append(int(relaciones[x][1]))
-                    self.recorrerArbol(ids, int(relaciones[x][1]))
-            elif (int(iid) == int(relaciones[x][1])):
-                if (ids.count(int(relaciones[x][0])) < 1):
-                    ids.append(int(relaciones[x][0]))
-                    self.recorrerArbol(ids, int(relaciones[x][0]))
-    """------------------------------ Fin Recorrer Arbol-----------------------------------"""
     
     @expose()
     def aprobaritem(self,**kw):
@@ -547,8 +583,6 @@ class RootController(BaseController):
                       "la linea base \"" + lineabase.nombre + "\" ahora esta comprometida")
                 redirect('/item/?fid='+str(fid[0]))
                 
-        
-        
         flash("El item \"" +str(fid[1]) +"\" fue aprobado")
         redirect('/item/?fid='+str(fid[0]))
 

@@ -196,7 +196,7 @@ class CrudRestController(RestController):
                 desarrollo = False
                 
         if desarrollo & longitud > 0:
-            fase = DBSession.query(Fase).filter_by(id = item.idFase).first()
+            fase = DBSession.query(Fase).filter_by(id = Item.idFase).first()
             fase.estado = 'desarrollo'
             allFaseSgte = DBSession.query(Fase).filter((Fase.idproyec == proyecto) & (Fase.id > faseActual)).all()
             longFaseSgte = len(allFaseSgte)
@@ -223,7 +223,7 @@ class CrudRestController(RestController):
         
         """Todos los item de la fase actual"""
         listaActual = DBSession.query(Item.id, Item.nombre).\
-                    filter_by(idFase=faseActual, ultimaversion=1, estado='aprobado').all()
+                    filter_by(idFase=faseActual, ultimaversion=1).all()
         
         """Todas las relaciones existentes"""
         relaciones = DBSession.query(RelacionItem.idItem1, RelacionItem.idItem2).all()
@@ -234,8 +234,9 @@ class CrudRestController(RestController):
         #Se comprueba que exista una fase anterior
         if (longFase > 0):
             listaAnterior = DBSession.query(Item.id, Item.nombre).\
-            filter(Item.idFase==allFase[longFase-1].id and Item.ultimaversion==1\
-                   and Item.idLineaBase != None and Item.estado.__eq__('aprobado')).all()
+            filter((Item.idFase==allFase[longFase-1].id) & (Item.ultimaversion==1)\
+                   & (Item.idLineaBase != None) & (Item.estado.__eq__('aprobado'))).all()
+        log.debug(listaAnterior)
 
         #Eliminar los item ya relacionados de la lista de fase anterior
         for x in range(longRel):

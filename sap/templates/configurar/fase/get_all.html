@@ -4,6 +4,7 @@
   <xi:include href="master.html" />
 <head>
 <title>${tmpl_context.title} - ${model} Listing</title>
+
 <?python
 	from sap.model import DeclarativeBase, metadata, DBSession
 	from sap.model.proyecto import Proyecto
@@ -17,6 +18,7 @@
 ?>
 
 <style>
+
 #menu_items {
   padding:0px 12px 0px 2px;
   list-style-type:None
@@ -33,7 +35,15 @@
     </div>
     <div style="float:left; width:80%">
       <h1 style="margin-top:1px;">Lista de $model</h1>
-      <div style="margin:1ex 0; width:90%">
+      
+      <div style="margin:1ex 0; width:120%">
+      	<div align="right">
+		  <form name="form1" action="./?pid=3" method="_do_get_provider_count_and_objs">
+		    <input type="text" name="buscar"/>
+		    <input type="image" src="${tg.url('/images/buscador_icono.gif')}" width="30"/>
+		    <input type="hidden" name="pid" value="${pid}"/>
+		  </form>
+		</div>
       
       	
         <div> <a py:if='estado' href='new/?pid=${pid}' class="add_link">Nueva $model</a>  </div>  
@@ -41,7 +51,7 @@
         
         <span py:if="value_list" style="margin-left:2em" py:content="tmpl_context.paginators.value_list.pager(link='../%ss/'%model.lower())"/>
       </div>
-      <div class="crud_table" style="width:90%">
+      <div class="crud_table" style="width:120%">
         ${XML(tmpl_context.widget(value=value_list, action='../'+model.lower()+'s.json'))}
       </div>
     </div>
