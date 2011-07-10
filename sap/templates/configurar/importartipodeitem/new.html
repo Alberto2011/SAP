@@ -25,5 +25,15 @@
      ${XML(tmpl_context.widget(value=value, action='./', child_args=dict(TiposDeItemImportar=dict(options=importar_options))))}
   </div>
   <div style="height:0px; clear:both;"> &nbsp; </div>
+  <?python
+  
+	from sap.model import DeclarativeBase, metadata, DBSession
+	from sap.model.fase import Fase
+	idproyecto= DBSession.query(Fase.idproyec).filter_by(id=value['fid']).first()  
+	
+  ?> 
+  
+    <a href='/fase/?pid=${idproyecto[0]}'><img src="${tg.url('/images/boton_atras.gif')}" align="left" style="border-style:none"/></a>
+  
 </body>
 </html>

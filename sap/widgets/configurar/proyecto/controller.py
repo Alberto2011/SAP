@@ -153,7 +153,7 @@ e record, returns HTML or json"""
         value = self.edit_filler.get_value(kw)
         return dict(value=value,model=self.model.__name__)
 
-    @expose('tgext.crud.templates.edit')
+    @expose('sap.templates.configurar.proyecto.edit')
     def edit(self, *args, **kw):
         """Display a page to edit the record."""
         tmpl_context.widget = self.edit_form

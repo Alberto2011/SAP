@@ -29,14 +29,8 @@
      ${XML(tmpl_context.widget(value=value, action='./'))}
   </div>
   
-  <?python
-  
-  	print value
-  
-  ?>
-  
   <div style="height:0px; clear:both;"> &nbsp; </div>
-  <a href='/fase/?pid=${value["idproyec"]}'><input type="button" name="cancelar" value="Atrás"/></a>
+  <a href="${tg.url('/fase')}"><input type="button" name="cancelar" value="Atrás"/></a>
 
 </body>
 </html>
