@@ -1,0 +1,15 @@
+item	item-module.html
+item.Base	item-module.html#Base
+item.Item	item.Item-class.html
+item.Item.fechaCreacion	item.Item-class.html#fechaCreacion
+item.Item.idTipoDeItem	item.Item-class.html#idTipoDeItem
+item.Item.idLineaBase	item.Item-class.html#idLineaBase
+item.Item.idFase	item.Item-class.html#idFase
+item.Item.ultimaversion	item.Item-class.html#ultimaversion
+item.Item.version	item.Item-class.html#version
+item.Item.complejidad	item.Item-class.html#complejidad
+item.Item.__tablename__	item.Item-class.html#__tablename__
+item.Item.nombre	item.Item-class.html#nombre
+item.Item.nrohistorial	item.Item-class.html#nrohistorial
+item.Item.estado	item.Item-class.html#estado
+item.Item.id	item.Item-class.html#id

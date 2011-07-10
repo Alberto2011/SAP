@@ -1,0 +1,5 @@
+detalleitem	detalleitem-module.html
+detalleitem.mapper_detalleitem	detalleitem-module.html#mapper_detalleitem
+detalleitem.tabla_detalleitem	detalleitem-module.html#tabla_detalleitem
+detalleitem.DetalleItem	detalleitem.DetalleItem-class.html
+detalleitem.DetalleItem.__init__	detalleitem.DetalleItem-class.html#__init__

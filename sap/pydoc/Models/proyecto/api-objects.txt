@@ -1,0 +1,5 @@
+proyecto	proyecto-module.html
+proyecto.tabla_proyecto	proyecto-module.html#tabla_proyecto
+proyecto.mapper_proyecto	proyecto-module.html#mapper_proyecto
+proyecto.Proyecto	proyecto.Proyecto-class.html
+proyecto.Proyecto.__init__	proyecto.Proyecto-class.html#__init__

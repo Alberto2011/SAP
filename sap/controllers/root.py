@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+""" Clase RootController
+@author José Chavéz.
+@author Alberto Capli.
+@author Nora González.
+"""
 """Main Controller"""
 import pydot
 from tg import expose, flash, require, url, request, redirect,response
@@ -76,21 +81,7 @@ __all__ = ['RootController']
 
 
 class RootController(BaseController):
-    """
-    The root controller for the SAP application.
-
-    All the other controllers and WSGI applications should be mounted on this
-    controller. For example::
-
-        panel = ControlPanelController()
-        another_app = AnotherWSGIApplication()
-
-    Keep in mind that WSGI applications shouldn't be mounted directly: They
-    must be wrapped around with :class:`tg.controllers.WSGIAppController`.
-
-    """
-            
-    
+              
 ################Administración########################    
     secc = SecureController()
     admin = AdminController(model, DBSession, config_type=TGAdminConfig)

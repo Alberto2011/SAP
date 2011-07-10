@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+""" Clase RootController
+@author José Chavéz.
+@author Alberto Capli.
+@author Nora González.
+"""
 """
 Auth* related model.
 

@@ -1,0 +1,7 @@
+userfile	userfile-module.html
+userfile.UserFile	userfile.UserFile-class.html
+userfile.UserFile.__tablename__	userfile.UserFile-class.html#__tablename__
+userfile.UserFile.__init__	userfile.UserFile-class.html#__init__
+userfile.UserFile.id	userfile.UserFile-class.html#id
+userfile.UserFile.filecontent	userfile.UserFile-class.html#filecontent
+userfile.UserFile.filename	userfile.UserFile-class.html#filename
