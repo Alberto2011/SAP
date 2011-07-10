@@ -133,6 +133,15 @@ class CrudRestController(RestController):
             values = self.table_filler.get_value(**kw)
         else:
             values = []
+       
+        
+        longitud=len(values)
+        for fila in range(longitud):
+            values[fila]['idProyecto'] = DBSession.query(Proyecto.nombre).filter_by(id = values[fila]['idProyecto']).one()
+            values[fila]['idFase'] = DBSession.query(Fase.nombre).filter_by(id = values[fila]['idFase']).one()    
+            values[fila]['iduser'] = DBSession.query(User.user_name).filter_by(user_id = values[fila]['iduser']).one()
+            values[fila]['idPermiso'] = DBSession.query(Permission.permission_name).filter_by(permission_id = values[fila]['idPermiso']).one()
+        
 
         tmpl_context.widget = self.table
         return dict(model=self.model.__name__, value_list=values)

@@ -1,4 +1,5 @@
 from sap.model import DeclarativeBase, metadata, DBSession
+from sap.model.proyecto import Proyecto
 from tg.decorators import without_trailing_slash, with_trailing_slash, paginate
 from tw.core import WidgetsList
 from tw.forms import CheckBoxList,TableForm, TextField, CalendarDatePicker, SingleSelectField, TextArea
@@ -66,7 +67,21 @@ class ProyectoTableFiller(TableFiller):
         offset = kw.get('offset', None)
         order_by = kw.get('order_by', None)
         desc = kw.get('desc', False)
-        objs = DBSession.query(self.__entity__).filter_by(liderProyecto=request.identity['repoze.who.userid']).all()
+        
+        
+        
+        
+        log.debug(kw)
+        
+        if len(kw) > 0:
+            
+            objs = DBSession.query(self.__entity__).filter((Proyecto.liderProyecto==request.identity['repoze.who.userid']) & (Proyecto.nombre.ilike('%'+str(kw['buscar'])+'%'))).all()
+            
+        else:
+            objs = DBSession.query(self.__entity__).filter_by(liderProyecto=request.identity['repoze.who.userid']).all()
+        
+        
+        
         count = len(objs)
         self.__count__ = count
         return count, objs    

@@ -25,7 +25,7 @@
         <a href='new/?pid=${pid}' class="add_link">New $model</a>
         <span py:if="value_list" style="margin-left:2em" py:content="tmpl_context.paginators.value_list.pager(link='../%ss/'%model.lower())"/>
       </div>
-      <div class="crud_table" style="width:90%">
+      <div class="crud_table" style="width:120%">
         ${XML(tmpl_context.widget(value=value_list, action='../'+model.lower()+'s.json'))}
       </div>
     </div>
