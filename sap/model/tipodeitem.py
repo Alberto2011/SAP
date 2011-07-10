@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+""" Clase RootController
+@author José Chavéz.
+@author Alberto Capli.
+@author Nora González.
+"""
+
 from sqlalchemy import *
 from sqlalchemy.orm import mapper
 from sap.model import metadata

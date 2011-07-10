@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+""" Clase RootController
+@author José Chavéz.
+@author Alberto Capli.
+@author Nora González.
+"""
 """Main Controller"""
 import pydot
 from tg import expose, flash, require, url, request, redirect,response
