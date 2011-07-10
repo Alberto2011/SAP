@@ -73,8 +73,6 @@ class RevertirTableFiller(TableFiller):
         desc = kw.get('desc', False)
         #objs = DBSession.query(self.__entity__).filter_by(idFase=1).all()
         
-        log.debug('kwkw: %s' %kw)
-        
         if len(kw) > 0:
             if len(kw) > 1:
                 #objs = DBSession.query(self.__entity__).filter((Fase.idproyec==kw['pid']) & (Fase.nombre.ilike('%'+str(kw['buscar'])+'%'))).all()
