@@ -67,18 +67,21 @@ class ProyectoTableFiller(TableFiller):
             proyectos.append(DBSession.query(self.__entity__).filter_by(id = idProy[y]).one())
 
         
-        objs = proyectos
+        log.debug("kwproyec: %s" %kw)
+        
+        if len(kw) > 0:
+            
+            for y in range(longitud):
+                proyectos.append(DBSession.query(self.__entity__).filter((Proyecto.id == idProy[y]) & (Proyecto.nombre.ilike('%'+str(kw['buscar'])+'%'))).one())
+            
+            objs =proyectos 
+            
+        else:
+            objs = proyectos
+        
+        
                 
-        #log.debug("IdProyect %s" %idProy[1])
-        #proyectos=[x for x in (DBSession.query(self.__entity__.id, self.__entity__.nombre,self.__entity__.descripcion,self.__entity__.fechaCreacion,self.__entity__.liderProyecto,self.__entity__.nrofase,self.__entity__.estado))]
         
-        
-        #log.debug(proyectos)
-        
-        
-        #objs = DBSession.query(self.__entity__).filter_by(liderProyecto=request.identity['repoze.who.userid']).all()
-        #objs = DBSession.query(self.__entity__).filter_by(id= 6).all()
-        #log.debug("Obs %s" %objs)
         
         count = len(objs)
         self.__count__ = count
