@@ -45,11 +45,12 @@ class FaseTableFiller(TableFiller):
         
         proyecto = DBSession.query(Fase.idproyec).filter_by(id = pklist).first()
         estado = DBSession.query(Proyecto.estado).filter_by(id = proyecto).first()
-        faseanterior = DBSession.query(Fase).filter((Fase.idproyec == proyecto) & (Fase.id < pklist)).all()
+        faseanterior = DBSession.query(Fase).filter((Fase.idproyec == proyecto) & (Fase.id < pklist)).order_by(Fase.id).all()
         longitud = len(faseanterior)
         
         if str(estado[0]).__eq__("iniciado"):
             if longitud > 0:
+                
                 if (faseanterior[longitud-1].estado == 'inicial') | (faseanterior[longitud-1].estado == 'desarrollo'):
                     value = '<div></div>'
                 else:

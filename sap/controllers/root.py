@@ -327,7 +327,7 @@ class RootController(BaseController):
     @expose('sap.templates.desarrollar.abrirlineabase.new')
     def abrirlineabaserelacion(self,**kw):
         
-        tmpl_context.form = create_abrirlineabaserelacion_form
+        tmpl_context.form = create_abrirlineabase_form
 
         if len(kw)>1:
             if (int(kw['lineaBase']) == 0):
@@ -335,37 +335,48 @@ class RootController(BaseController):
                 lineabase = DBSession.query(LineaBase).filter_by(id = item.idLineaBase).first()
                 lineabase.estado = 'abierta'
                 item.estado = 'modificado'
-                listalineabase = DBSession.query(LineaBase).filter_by(idFase = item.idFase).all()
-                desarrollo = True
-                longitud = len(listalineabase)
                 
-                for x in range (longitud):
-                    if str(listalineabase[x].estado).__eq__('cerrada'):
-                        desarrollo = False
-                        
-                if desarrollo:
-                    fase = DBSession.query(Fase).filter_by(id = item.idFase).first()
-                    fase.estado = 'desarrollo'
-                    allFaseSgte = DBSession.query(Fase).filter((Fase.idproyec == fase.idproyec) & (Fase.id > fase.id)).all()
-                    longFaseSgte = len(allFaseSgte)
+                faseitemmodificado = DBSession.query(Fase).filter_by(id = item.idFase).first()
+                if str(faseitemmodificado.estado).__eq__('lineaBaseTotal'):
+                    faseitemmodificado.estado = 'desarrollo'
+                
+                
+                ids=[]
+                ids.append(item.id)
+                self.recorrerArbolAtrasLB(ids, item.id)
+                self.recorrerArbolAdelanteLB(ids, item.id)
+                ids.remove(item.id)
+                longitudids = len(ids)
+                
+                for x in range(longitudids):
+                    itemrevision = DBSession.query(Item).filter_by(id=ids[x], ultimaversion=1).first()
                     
-                    if (longFaseSgte > 0):
-                        allFaseSgte[0].estado = 'desarrollo'
-                        lineabasesgte = DBSession.query(LineaBase).filter_by(idFase=allFaseSgte[0].id).all()
-                        
-                        for x in range (len(lineabasesgte)):
-                            if str(lineabasesgte[x].estado).__eq__('cerrada'):
-                                lineabasesgte[x].estado = 'comprometida'
-                                
-                                itemlbsgte = DBSession.query(Item).filter_by(idLineaBase=lineabasesgte[x].id, ultimaversion=1).all()
-                                for y in range (len(itemlbsgte)):
-                                    itemlbsgte[y].estado = 'revision'
+                    if itemrevision != None:
+                        if itemrevision.estado != 'modificado':
+                            itemrevision.estado = 'revision'
+                            if itemrevision.idLineaBase != None:
+                                lineabase = DBSession.query(LineaBase).filter_by(id=itemrevision.idLineaBase).first()
+                                if lineabase.estado == 'cerrada':
+                                    lineabase.estado = 'comprometida'
+                                    listalineabase = DBSession.query(LineaBase).filter_by(idFase = itemrevision.idFase).all()
+                                    desarrollo = True
+                                    longitud = len(listalineabase)
+                                    
+                                    for y in range (longitud):
+                                        if str(listalineabase[y].estado).__eq__('cerrada'):
+                                            desarrollo = False
+                                            
+                                    if desarrollo:
+                                        fase = DBSession.query(Fase).filter_by(id = itemrevision.idFase).first()
+                                        fase.estado = 'desarrollo'
                 
-                flash("La linea base \"" + lineabase.nombre + "\" se ha abierto", "warning")
-                redirect("../relacionitem/new/?iid="+kw['iid'])
+                flash("La linea base \"" + lineabase.nombre + "\" se ha abierto. El item \""+\
+                      item.nombre+"\" paso al estado modificado y los item implicados pasaron al"\
+                      " estado de revision", "warning")
+                redirect("../item/"+kw['iid']+'/edit')
             else:
                 fid = DBSession.query(Item.idFase).filter_by(id = kw['iid']).first()
-                flash("Debe abrir la linea base para crear relaciones", "error")
+                flash("Debe abrir la linea base para editar el item", "error")
                 redirect("../item/?fid="+str(fid[0]))
         else:
             lineaBase=[x for x in enumerate(('Abrir', 'No abrir'))]
