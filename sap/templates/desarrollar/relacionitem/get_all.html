@@ -36,7 +36,7 @@
 	from sap.model.item import Item
 	fid=DBSession.query(Item.idFase).filter_by(id=iid).first()
   ?>
-  <a href='/item/?fid=${fid[0]}'><input type="button" name="cancelar" value="Atrás"/></a>
+  <a href='/item/?fid=${fid[0]}'><img src="${tg.url('/images/boton_atras.gif')}" align="left" style="border-style:none"/></a>
 
 </body>
 </html>
