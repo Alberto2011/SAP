@@ -70,9 +70,7 @@ class ProyectoTableFiller(TableFiller):
         
         
         if len(kw) > 0:
-            
-            objs = DBSession.query(self.__entity__).filter((Proyecto.liderProyecto==request.identity['repoze.who.userid']) & (Proyecto.nombre.ilike('%'+str(kw['buscar'])+'%'))).all()
-            
+                objs = DBSession.query(self.__entity__).filter((Proyecto.liderProyecto==request.identity['repoze.who.userid']) & (Proyecto.nombre.ilike('%'+str(kw['buscar'])+'%'))).all()
         else:
             objs = DBSession.query(self.__entity__).filter_by(liderProyecto=request.identity['repoze.who.userid']).all()
         

@@ -179,6 +179,7 @@ class CrudRestController(RestController):
         
         fases = [x for x in DBSession.query(Fase.id, Fase.nombre).filter_by(idproyec=pid)]
         usuarios = [x for x in (DBSession.query(User.user_id, User.user_name))]
+        usuarios.remove(usuarios[0])
         #permisos= [x for x in (DBSession.query(Permission. permission_id ,Permission. permission_name))]
 
         return dict(value={'idProyecto':pid}, model=self.model.__name__, fases_options=fases, usuarios_options=usuarios)
@@ -198,14 +199,13 @@ class CrudRestController(RestController):
     	for indice in range(longitud):
             kw['idPermiso']= ids[indice]
             msj=DBSession.query(ProyFaseUsuario).filter_by(idProyecto=kw['idProyecto'], iduser=kw['iduser'], idFase=kw['idFase'],idPermiso=kw['idPermiso']).first()
-            
+            log.debug('msg: %s' %msj)
             if msj == None:
                 
                 self.provider.create(self.model, params=kw)
             else:
                 flash("El usuario ya fue adherido a la Fase elegida", "error")
                 redirect('new/?pid='+ kw['idProyecto'])
-                
         raise redirect('./?pid='+ kw['idProyecto'])
 
 

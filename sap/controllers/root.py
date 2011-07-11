@@ -126,31 +126,6 @@ class RootController(BaseController):
         current_files = DBSession.query(UserFile).all()
         return dict(current_files=current_files)
     
-    """    
-    @expose()
-    def save(self,**kw ):
-        
-        
-        idItem=kw['idItem']
-        userfile=kw['userfile']
-        
-        log.debug("userfile: %s" %userfile)
-        forbidden_files = [".js", ".htm", ".html"]
-        for forbidden_file in forbidden_files:
-            if userfile.filename.find(forbidden_file) != -1:
-                return redirect("../../adjuntos/new")
-        filecontent = userfile.file.read()
-        new_file = Adjuntos(filename=userfile.filename, filecontent=filecontent,idItem=idItem)
-        archivoguardado=DBSession.add(new_file)
-        DBSession.flush()
-        log.debug("archivoguardado: %s" %archivoguardado)
-        
-        redirect("../../adjuntos/new")
-        
-      """  
-        
-        
-    
     @expose(content_type=CUSTOM_CONTENT_TYPE)
     def view(self, fileid):
         iid=DBSession.query(Adjuntos.idItem).filter_by(id=fileid).first()

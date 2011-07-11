@@ -111,16 +111,18 @@ userproy_table_filler =  UserProyTableFiller(DBSession)
 
 
 
-class  UserProyForm(TableForm):
+class UserProyForm(TableForm):
 
     fases_options = []
     usuarios_options=[]
+    permisos_options = [(4, u'ver_item'), (5, u'crear_item'), (6, u'editar_item'),\
+                        (7, u'borrar_item'), (8, u'revertir_item'), (9, u'revivir_item'),\
+                        (10, u'abm_adjuntos'), (11, u'aprobar_item'), (12, u'crear_relaciones'),\
+                        (13, u'crear_linea_base'), (14, u'abrir_linea_base')]
  
-    
     
     #user_options = [x for x in (DBSession.query(User.user_id, User.user_name))]
     #permisos_options = [x for x in enumerate (("aprobar", "leer", "escribir"))]
-    permisos_options= DBSession.query(Permission.permission_id, Permission.permission_name).filter( (Permission.permission_name=="aprobar") | (Permission.permission_name=="leer") | (Permission.permission_name=="escribir")).all()
     
     fields = [
         HiddenField('idProyecto', label_text='IdProyecto'),
@@ -129,10 +131,11 @@ class  UserProyForm(TableForm):
         Spacer(),
        	SingleSelectField('iduser', options=usuarios_options, label_text='Usuario'),    
         Spacer(),
-        CheckBoxList('idPermiso', options=permisos_options, label_text='Permiso'),     
+        CheckBoxList('idPermiso', options=permisos_options, label_text='Permisos'),
+        Spacer()     
         ]
     
-submit_text = 'Agregar Usuario'
+    submit_text = 'Agregar Usuario'
 userproy_add_form =  UserProyForm('create_UserProy_form')
 
 
