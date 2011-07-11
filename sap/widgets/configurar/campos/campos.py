@@ -134,7 +134,6 @@ class CamposController(CrudRestController):
         result['tid']=tid
         fid = DBSession.query(TipoDeItem.idFase).filter_by(id=tid).first()
         result['fid'] = fid[0]
-        log.debug(result)
         return result
 
 

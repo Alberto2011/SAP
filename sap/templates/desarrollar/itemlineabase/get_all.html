@@ -31,6 +31,16 @@
     </div>
   </div>
   <div style="clear:both;"/>
+  
+  <?python
+		from sap.model import DeclarativeBase, metadata, DBSession
+		from sap.model.lineabase import LineaBase
+		fid=DBSession.query(LineaBase.idFase).filter_by(id=lid).first()
+		print fid[0]
+  ?>
+  
+  
+  <a href='../lineabase/?fid=${fid[0]}'><img src="${tg.url('/images/boton_atras.gif')}" align="left" style="border-style:none"/></a>
 
 </body>
 </html>

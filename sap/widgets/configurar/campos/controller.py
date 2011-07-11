@@ -150,7 +150,7 @@ class CrudRestController(RestController):
         value = self.edit_filler.get_value(kw)
         return dict(value=value,model=self.model.__name__)
 
-    @expose('tgext.crud.templates.edit')
+    @expose('sap.templates.configurar.campos.edit')
     def edit(self, *args, **kw):
         """Display a page to edit the record."""
         tmpl_context.widget = self.edit_form
@@ -205,8 +205,12 @@ class CrudRestController(RestController):
         d = {}
         for i, arg in enumerate(args):
             d[pks[i]] = arg
+        
+        tid=DBSession.query(Campos.idTipoDeItem).filter_by(id=d[pks[i]]).first()
         self.provider.delete(self.model, d)
-        redirect('./' + '../' * (len(pks) - 1))
+        
+
+        redirect('./?tid='+ str(tid[0]) )
 
     @expose('tgext.crud.templates.get_delete')
     def get_delete(self, *args, **kw):

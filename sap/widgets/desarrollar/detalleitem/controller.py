@@ -151,7 +151,7 @@ class CrudRestController(RestController):
         value = self.edit_filler.get_value(kw)
         return dict(value=value,model=self.model.__name__)
 
-    @expose('tgext.crud.templates.edit')
+    @expose('sap.templates.desarrollar.detalleitem.edit')
     def edit(self, *args, **kw):
         """Display a page to edit the record."""
         tmpl_context.widget = self.edit_form

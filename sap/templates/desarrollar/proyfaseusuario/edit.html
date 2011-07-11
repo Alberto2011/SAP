@@ -3,8 +3,7 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
 <xi:include href="master.html" />
-<title>${tmpl_context.title} - Nueva ${model}</title>
-
+<title>${tmpl_context.title} - Editar ${model}</title>
 <head>
 <style>
 #menu_items {
@@ -22,12 +21,10 @@
        </ul>
   </div>
   <div style="float:left;" class="crud_add">
-    <h2 style="margin-top:1px;">Nueva $model</h2>
-     
-     ${XML(tmpl_context.widget(value=value, action='../', child_args=dict(items=dict(options=items_options))))}
+    <h2 style="margin-top:1px;">Editar $model</h2>
+     ${XML(tmpl_context.widget(value=value, action='./', child_args=dict(liderProyecto=dict(options=lider_options))))}
   </div>
   <div style="height:0px; clear:both;"> &nbsp; </div>
- 
-   <a href='/lineabase/?fid=${value["idFase"]}'><img src="${tg.url('/images/boton_atras.gif')}" align="left" style="border-style:none"/></a>
+  <a href="${tg.url('/proyectoconfig')}"><img src="${tg.url('/images/boton_atras.gif')}" align="left" style="border-style:none"/></a>
 </body>
 </html>
