@@ -268,7 +268,6 @@ class RootController(BaseController):
 #############################################################
     @expose('sap.templates.desarrollar.abrirlineabase.new')
     def abrirlineabase(self,**kw):
-        
         tmpl_context.form = create_abrirlineabase_form
 
         if len(kw)>1:

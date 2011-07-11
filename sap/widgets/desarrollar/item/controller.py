@@ -266,7 +266,7 @@ class CrudRestController(RestController):
     @catch_errors(errors, error_handler=edit)
     def put(self, *args, **kw):
         """update"""
-       
+        
         pks = self.provider.get_primary_fields(self.model)
         for i, pk in enumerate(pks):
             if pk not in kw and i < len(args):
@@ -354,27 +354,13 @@ class CrudRestController(RestController):
                             desarrollo = True
                             longitud = len(listalineabase)
                             
-                            for x in range (longitud):
-                                if str(listalineabase[x].estado).__eq__('cerrada'):
+                            for y in range (longitud):
+                                if str(listalineabase[y].estado).__eq__('cerrada'):
                                     desarrollo = False
                                     
                             if desarrollo:
                                 fase = DBSession.query(Fase).filter_by(id = lineabase.idFase).first()
                                 fase.estado = 'desarrollo'
-                                allFaseSgte = DBSession.query(Fase).filter((Fase.idproyec == fase.idproyec) & (Fase.id > fase.id)).all()
-                                longFaseSgte = len(allFaseSgte)
-                                
-                                if (longFaseSgte > 0):
-                                    allFaseSgte[0].estado = 'desarrollo'
-                                    lineabasesgte = DBSession.query(LineaBase).filter_by(idFase=allFaseSgte[0].id).all()
-                                    
-                                    for x in range (len(lineabasesgte)):
-                                        if str(lineabasesgte[x].estado).__eq__('cerrada'):
-                                            lineabasesgte[x].estado = 'comprometida'
-                                            
-                                            itemlbsgte = DBSession.query(Item).filter_by(idLineaBase=lineabasesgte[x].id, ultimaversion=1).all()
-                                            for y in range (len(itemlbsgte)):
-                                                itemlbsgte[y].estado = 'revision'
 
         flash("El item \"" +kw['nombre'] +"\" ha sido modificado correctamente")
             

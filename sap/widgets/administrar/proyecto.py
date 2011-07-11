@@ -20,12 +20,6 @@ from repoze.what.predicates import *
 
 
 
-
-
-
-
-
-
 from tw.api import CSSLink
 from tg import url
 from tw.forms.validators import Int, NotEmpty, DateConverter
@@ -71,7 +65,6 @@ class ProyectoTableFiller(TableFiller):
         order_by = kw.get('order_by', None)
         desc = kw.get('desc', False)
         
-        log.debug(kw)
         
         if len(kw) > 0:
             #if len(kw) > 1:
