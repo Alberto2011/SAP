@@ -5,6 +5,7 @@
 @author Nora González.
 """
 from sap.model import DeclarativeBase, metadata, DBSession
+from sap.model.fase import Fase 
 
 from tg import expose, flash, redirect, tmpl_context
 from tg.decorators import without_trailing_slash, with_trailing_slash
@@ -117,7 +118,7 @@ class CrudRestController(RestController):
     @with_trailing_slash
     @expose('tgext.crud.templates.get_all')
     @expose('json')
-    @paginate('value_list', items_per_page=7)
+    @paginate('value_list', items_per_page=50)
     def get_all(self, *args, **kw):
         """Return all records.
            Pagination is done by offset/limit in the filler method.
@@ -173,13 +174,24 @@ class CrudRestController(RestController):
         tmpl_context.widget = self.new_form
         kw['idproyec']=pid
         
-        #return dict(value=kw, model=self.model.__name__)
         return dict(value={'idproyec':pid},value2=kw, model=self.model.__name__)
 
     @catch_errors(errors, error_handler=new)
     @expose()
     @registered_validate(error_handler=new)
     def post(self, *args, **kw):
+        
+        if kw['nombre']==None:
+            flash("Una fase debe tener un nombre" , "error")
+            redirect('../fase/new/?pid='+ kw['idproyec'])
+        
+        
+        nombreduplicado=DBSession.query(Fase.nombre).filter((Fase.idproyec==kw['idproyec']) &(Fase.nombre==kw['nombre'])).first()
+        
+        if nombreduplicado != None :
+            flash("Ya existe una fase con el mismo nombre" , "error")
+            redirect('../fase/new/?pid='+ kw['idproyec'])
+            
         self.provider.create(self.model, params=kw)
         
         raise redirect('./?pid='+kw['idproyec'])
@@ -193,10 +205,20 @@ class CrudRestController(RestController):
         for i, pk in enumerate(pks):
             if pk not in kw and i < len(args):
                 kw[pk] = args[i]
-                
-        log.debug("kwedit %s" %kw)
-        self.provider.update(self.model, params=kw)
         
+        idproyec=DBSession.query(Fase.idproyec).filter_by(id=kw['id']).first()
+        if kw['nombre']==None:
+            flash("Una fase debe tener un nombre" , "error")
+            redirect('/fase/'+ kw['id']+'/edit')
+        
+        
+        nombreduplicado=DBSession.query(Fase.nombre).filter((Fase.idproyec==idproyec) &(Fase.id !=kw['id']) &(Fase.nombre==kw['nombre'])).first()
+        
+        if nombreduplicado != None :
+            flash("Ya existe una fase con el mismo nombre" , "error")
+            redirect('/fase/'+ kw['id']+'/edit')
+  
+        self.provider.update(self.model, params=kw)
         idProy=DBSession.query(Fase.idproyec).filter_by(id=kw['id']).first()
         
         redirect('../?pid='+str(idProy[0]))
@@ -209,8 +231,11 @@ class CrudRestController(RestController):
         d = {}
         for i, arg in enumerate(args):
             d[pks[i]] = arg
+        pid=DBSession.query(Fase.idproyec).filter_by(id=d[pks[i]]).first()
+        
         self.provider.delete(self.model, d)
-        redirect('./' + '../' * (len(pks) - 1))
+        
+        redirect('./?pid='+ str(pid[0]))
 
     @expose('tgext.crud.templates.get_delete')
     def get_delete(self, *args, **kw):
