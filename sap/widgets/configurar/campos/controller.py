@@ -178,6 +178,21 @@ class CrudRestController(RestController):
     @expose()
     @registered_validate(error_handler=new)
     def post(self, *args, **kw):
+        
+        log.debug(kw)
+        if kw['nombre']==None:
+            flash("El nuevo Atributo debe tener un nombre" , "error")
+            redirect('./new/?tid='+ str(kw['idTipoDeItem']))
+        
+        nombreduplicado=DBSession.query(Campos.nombre).filter((Campos.idTipoDeItem==kw['idTipoDeItem']) &(Campos.nombre==kw['nombre'])).first()
+        
+        if nombreduplicado != None :
+            flash("Ya existe un Atributo con el mismo nombre" , "error")
+            redirect('./new/?tid='+ str(kw['idTipoDeItem']))
+        
+        
+        
+        
         self.provider.create(self.model, params=kw)
         
         raise redirect('./?tid='+kw['idTipoDeItem'])
@@ -191,9 +206,24 @@ class CrudRestController(RestController):
         for i, pk in enumerate(pks):
             if pk not in kw and i < len(args):
                 kw[pk] = args[i]
+        
+        idTipoDeItem=DBSession.query(Campos.idTipoDeItem).filter_by(id=kw['id']).first()
+        
+        
+        
+        if kw['nombre']==None:
+            flash("El nuevo Atributo debe tener un nombre" , "error")
+            redirect('../'+ kw['id'] +'/edit')
+        
+        
+        nombreduplicado=DBSession.query(Campos.nombre).filter((Campos.idTipoDeItem==idTipoDeItem) &(Campos.id != kw['id']) &(Campos.nombre==kw['nombre'])).first()
+        
+        if nombreduplicado != None :
+            flash("Ya existe un Atributo con el mismo nombre" , "error")
+            redirect('../'+ kw['id'] +'/edit')
+            
+            
         self.provider.update(self.model, params=kw)
-        
-        
         idtipo=DBSession.query(Campos.idTipoDeItem).filter_by(id=kw[pk]).first()
         
         redirect('../?tid=' + str(idtipo[0]))

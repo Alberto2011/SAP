@@ -209,6 +209,7 @@ class CrudRestController(RestController):
                 idTipo= ids[indice]
                 tipo=DBSession.query(TipoDeItem).filter_by(id=idTipo).first()
                 
+                log.debug('tiposss: %s' %tipo)
                 
                 tipocopia=TipoDeItem()
                 tipocopia.nombre=tipo.nombre

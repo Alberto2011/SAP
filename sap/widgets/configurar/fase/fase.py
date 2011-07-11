@@ -26,7 +26,7 @@ log = logging.getLogger(__name__)
 
 class FaseTable(TableBase):
     __model__ = Fase
-    __omit_fields__ = ['id']
+    __omit_fields__ = ['id','idproyec']
 fase_table = FaseTable(DBSession) 
 
 
@@ -44,7 +44,14 @@ class FaseTableFiller(TableFiller):
         value='<div></div>'
         
         if str(estado[0]).__eq__("nuevo"):
-            value = '<div><a class="edit_link" href="'+pklist+'/edit" style="text-decoration:none">edit</a></div>'
+            value = '<div><div><a class="edit_link" href="'+pklist+'/edit" style="text-decoration:none">edit</a></div>'\
+            '<div><form method="POST" action="'+pklist+'" class="button-to">'\
+            '<input type="hidden" name="_method" value="DELETE" />'\
+            '<input class="delete-button" onclick="return confirm(\'Are you sure?\');" value="delete" type="submit" '\
+            'style="background-color: transparent; float:left; border:0; color: #286571; display: inline; margin: 0; padding: 0;"/>'\
+            '</form>'\
+            '</div>''</div>'
+            
         elif str(estado[0]).__eq__("iniciado"):
             value = '<div><div><a class="edit_link" href="'+pklist+'/edit" style="text-decoration:none">edit</a>'\
             '<div><a class="loginlogout" href="/tipodeitem/?fid='+pklist+ '">TiposItem</a></div><br/>'\
@@ -146,7 +153,7 @@ class FaseController(CrudRestController):
     @with_trailing_slash
     @expose("sap.templates.configurar.fase.get_all")
     @expose('json')
-    @paginate('value_list', items_per_page=7)
+    @paginate('value_list', items_per_page=50)
     def get_all(self, pid=None,*args, **kw):
         kw['pid']=pid
         result=super(FaseController, self).get_all(*args, **kw)

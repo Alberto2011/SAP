@@ -185,15 +185,22 @@ class CrudRestController(RestController):
     @registered_validate(error_handler=new)
     def post(self, *args, **kw):
         
-        self.provider.create(self.model, params=kw)
         
-        """----------obtine el id del nuevo tipo creado-----------"""
-        
-        idtipo= [x for x in (DBSession.query(TipoDeItem.id).filter_by(idFase=kw['idFase'],nombre=kw['nombre'],descripcion=kw['descripcion']).first())]
-        
+        if kw['nombre']==None:
+            flash("El tipo de item debe tener un nombre" , "error")
+            redirect('/tipodeitem/new/?fid='+ str(kw['idFase']))
         
         
-        raise redirect("/campos/?tid="+str(idtipo[0]))
+        nombreduplicado=DBSession.query(TipoDeItem.nombre).filter((TipoDeItem.idFase==kw['idFase']) &(TipoDeItem.nombre==kw['nombre'])).first()
+        
+        if nombreduplicado != None :
+            flash("Ya existe \"Tipo de Item\" con el mismo nombre" , "error")
+            redirect('/tipodeitem/new/?fid='+ str(kw['idFase']))
+        
+        idtipo=self.provider.create(self.model, params=kw)
+   
+        
+        raise redirect("/campos/?tid="+str(idtipo.id))
     
     
     @expose()
