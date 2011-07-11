@@ -268,7 +268,6 @@ class RootController(BaseController):
 #############################################################
     @expose('sap.templates.desarrollar.abrirlineabase.new')
     def abrirlineabase(self,**kw):
-        
         tmpl_context.form = create_abrirlineabase_form
 
         if len(kw)>1:
@@ -277,33 +276,44 @@ class RootController(BaseController):
                 lineabase = DBSession.query(LineaBase).filter_by(id = item.idLineaBase).first()
                 lineabase.estado = 'abierta'
                 item.estado = 'modificado'
-                listalineabase = DBSession.query(LineaBase).filter_by(idFase = item.idFase).all()
-                desarrollo = True
-                longitud = len(listalineabase)
                 
-                for x in range (longitud):
-                    if str(listalineabase[x].estado).__eq__('cerrada'):
-                        desarrollo = False
-                        
-                if desarrollo:
-                    fase = DBSession.query(Fase).filter_by(id = item.idFase).first()
-                    fase.estado = 'desarrollo'
-                    allFaseSgte = DBSession.query(Fase).filter((Fase.idproyec == fase.idproyec) & (Fase.id > fase.id)).all()
-                    longFaseSgte = len(allFaseSgte)
+                faseitemmodificado = DBSession.query(Fase).filter_by(id = item.idFase).first()
+                if str(faseitemmodificado.estado).__eq__('lineaBaseTotal'):
+                    faseitemmodificado.estado = 'desarrollo'
+                
+                
+                ids=[]
+                ids.append(item.id)
+                self.recorrerArbolAtrasLB(ids, item.id)
+                self.recorrerArbolAdelanteLB(ids, item.id)
+                ids.remove(item.id)
+                longitudids = len(ids)
+                
+                for x in range(longitudids):
+                    itemrevision = DBSession.query(Item).filter_by(id=ids[x], ultimaversion=1).first()
                     
-                    if (longFaseSgte > 0):
-                        allFaseSgte[0].estado = 'desarrollo'
-                        lineabasesgte = DBSession.query(LineaBase).filter_by(idFase=allFaseSgte[0].id).all()
-                        
-                        for x in range (len(lineabasesgte)):
-                            if str(lineabasesgte[x].estado).__eq__('cerrada'):
-                                lineabasesgte[x].estado = 'comprometida'
-                                
-                                itemlbsgte = DBSession.query(Item).filter_by(idLineaBase=lineabasesgte[x].id, ultimaversion=1).all()
-                                for y in range (len(itemlbsgte)):
-                                    itemlbsgte[y].estado = 'revision'
+                    if itemrevision != None:
+                        if itemrevision.estado != 'modificado':
+                            itemrevision.estado = 'revision'
+                            if itemrevision.idLineaBase != None:
+                                lineabase = DBSession.query(LineaBase).filter_by(id=itemrevision.idLineaBase).first()
+                                if lineabase.estado == 'cerrada':
+                                    lineabase.estado = 'comprometida'
+                                    listalineabase = DBSession.query(LineaBase).filter_by(idFase = itemrevision.idFase).all()
+                                    desarrollo = True
+                                    longitud = len(listalineabase)
+                                    
+                                    for y in range (longitud):
+                                        if str(listalineabase[y].estado).__eq__('cerrada'):
+                                            desarrollo = False
+                                            
+                                    if desarrollo:
+                                        fase = DBSession.query(Fase).filter_by(id = itemrevision.idFase).first()
+                                        fase.estado = 'desarrollo'
                 
-                flash("La linea base \"" + lineabase.nombre + "\" se ha abierto", "warning")
+                flash("La linea base \"" + lineabase.nombre + "\" se ha abierto. El item \""+\
+                      item.nombre+"\" paso al estado modificado y los item implicados pasaron al"\
+                      " estado de revision", "warning")
                 redirect("../item/"+kw['iid']+'/edit')
             else:
                 fid = DBSession.query(Item.idFase).filter_by(id = kw['iid']).first()
@@ -360,6 +370,57 @@ class RootController(BaseController):
         else:
             lineaBase=[x for x in enumerate(('Abrir', 'No abrir'))]
             return dict(tipoitem_options=lineaBase)
+        
+    """---------------------- Recorrer Arbol Atras -------------------------------------
+    Uso:
+        self.recorrerArbol (ids, iid)
+        ids: un vector que contiene primeramente al nodo inicial
+        iid: nodo inicial
+        Todos los nodos del arbol quedaran guardados en ids---------------------------"""
+    def recorrerArbolAtrasLB (self, *args):
+        ids = args[0]
+        itemraiz = args[1]
+
+        """-------------Obtiene de la BD las relaciones actuales del nodo en cuestion---"""
+        relaciones = DBSession.query(RelacionItem.idItem1,RelacionItem.idItem2).\
+                        filter((RelacionItem.idItem1==itemraiz)).all()
+        """------------------------------------------------------------------------"""
+        
+        for relacion in relaciones:
+            itemrelacion = DBSession.query(Item).filter_by(id=relacion.idItem2).first()
+            
+            if itemrelacion.ultimaversion == 1:
+                if (ids.count(itemrelacion.id) < 1):
+                        ids.append(itemrelacion.id)
+                self.recorrerArbolAtrasLB(ids, itemrelacion.id)
+
+    """------------------- Fin Recorrer Arbol Atras -----------------------------------"""
+    
+    """-------------------- Recorrer Arbol Adelante -------------------------------------
+    Uso:
+        self.recorrerArbol (ids, iid)
+        ids: un vector que contiene primeramente al nodo inicial
+        iid: nodo inicial
+        Todos los nodos del arbol quedaran guardados en ids---------------------------"""
+    def recorrerArbolAdelanteLB (self, *args):
+        ids = args[0]
+        itemraiz = args[1]
+
+        """-------------Obtiene de la BD las relaciones actuales del nodo en cuestion---"""
+        relaciones = DBSession.query(RelacionItem.idItem1,RelacionItem.idItem2).\
+                        filter((RelacionItem.idItem2==itemraiz)).all()
+        """------------------------------------------------------------------------"""
+        
+        for relacion in relaciones:
+            itemrelacion = DBSession.query(Item).filter_by(id=relacion.idItem1).first()
+            
+            if itemrelacion.ultimaversion == 1:
+                if (ids.count(itemrelacion.id) < 1):
+                        ids.append(itemrelacion.id)
+
+                self.recorrerArbolAdelanteLB(ids, itemrelacion.id)
+        
+    """---------------------- Fin Recorrer Arbol Adelante -----------------------------"""
    
     """------------------------------Calculo de Impacto--------------------------- """
     @expose('sap.templates.desarrollar.item.dibujar')

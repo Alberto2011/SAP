@@ -67,8 +67,6 @@ class ProyectoTableFiller(TableFiller):
             proyectos.append(DBSession.query(self.__entity__).filter_by(id = idProy[y]).one())
 
         
-        log.debug("kwproyec: %s" %kw)
-        
         if len(kw) > 0:
             
             for y in range(longitud):

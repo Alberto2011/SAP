@@ -69,10 +69,6 @@ class ProyectoTableFiller(TableFiller):
         desc = kw.get('desc', False)
         
         
-        
-        
-        log.debug(kw)
-        
         if len(kw) > 0:
             
             objs = DBSession.query(self.__entity__).filter((Proyecto.liderProyecto==request.identity['repoze.who.userid']) & (Proyecto.nombre.ilike('%'+str(kw['buscar'])+'%'))).all()

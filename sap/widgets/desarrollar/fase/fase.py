@@ -72,8 +72,6 @@ class FaseTableFiller(TableFiller):
         order_by = kw.get('order_by', None)
         desc = kw.get('desc', False)
         
-        log.debug('kwwww: %s' %kw)
-        
         if len(kw) > 0:
             """Se extrae el id del usuario quien inicio sesion"""
             idUsuario= [x for x in DBSession.query(User.user_id).filter_by(user_name=request.identity['repoze.who.userid'])]
