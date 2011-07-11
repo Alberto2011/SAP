@@ -337,10 +337,9 @@ class CrudRestController(RestController):
         self.recorrerArbolAtras(ids, int(itemnuevo[0]))
         self.recorrerArbolAdelante(ids, int(itemnuevo[0]))
         ids.remove(int(itemnuevo[0]))
-        log.debug(ids)
-        longitud = len(ids)
+        longitudids = len(ids)
 
-        for x in range(longitud):
+        for x in range(longitudids):
             itemrevision = DBSession.query(Item).filter_by(id=ids[x], ultimaversion=1).first()
             
             if itemrevision != None:
