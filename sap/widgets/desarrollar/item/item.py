@@ -35,9 +35,6 @@ from sap.model.campos import Campos
 from sap.model.lineabase import LineaBase
 from sap.model.detalleitem import DetalleItem
 
-
-
-
 ##################################################
 try:
     import tw.dojo
@@ -57,15 +54,6 @@ try:
 except ImportError:
     pass
 
-
-################################################
-
-
-
-
-
-
-    
 
 #from sap.controllers.root import *
 from tg import expose, flash, redirect, tmpl_context
@@ -107,104 +95,52 @@ class ItemTableFiller(TableFiller):
         item = DBSession.query(Item).filter_by(id=pklist).first()
         lineabase = DBSession.query(LineaBase).filter_by(id=item.idLineaBase).first()
         
-        value='<div></div>'
+        value='<div>'
+        
+        aprobar_item='<div><a class="loginlogout" href="/aprobaritem/?iid='+pklist+ '">Aprobar Item</a></div><br/>'
+        revertir='<div><a class="loginlogout" href="/revertir/?hid='+str(nrohistorial[0])+'">Historial</a></div><br/>'
+        detalle='<div><a class="loginlogout" href="/detalleitem/?iid='+pklist+'">  Detalle</a></div><br/>'
+        ver_relaciones='<div><a class="loginlogout" href="/relacionitem/?iid='+pklist+'">Ver relaciones</a></div><br/>'
+        crear_relaciones_linea_base='<div><a class="loginlogout" href="/abrirlineabaserelacion/?iid='+pklist+'">Crear relaciones</a></div><br/>'
+        crear_relaciones='<div><a class="loginlogout" href="/relacionitem/new/?iid='+pklist+'">Crear relaciones</a></div><br/>'
+        calcular_impacto='<div><a class="loginlogout" href="/calcularimpacto/?iid='+pklist+ '">  CalcularImpacto</a></div><br/>'
+        adjuntos='<div><a class="loginlogout" href="/adjuntos/new/?iid='+pklist+'">  Adjuntos</a></div><br/>'
+        editar_linea_base='<div><a class="edit_link" href="/abrirlineabase/?iid='+pklist+'" style="text-decoration:none">edit</a></div>'
+        editar='<div><a class="edit_link" href="'+pklist+'/edit" style="text-decoration:none">edit</a></div>'
+        borrar='<div><form method="POST" action="'+pklist+'" class="button-to">'\
+                '<input type="hidden" name="_method" value="DELETE" />'\
+                '<input class="delete-button" onclick="return confirm(\'Are you sure?\');" value="delete" type="submit" '\
+                'style="background-color: transparent; float:left; border:0; color: #286571; display: inline; margin: 0; padding: 0;"/>'\
+                '</form></div>'
         
         if str(estadoProy[0]).__eq__("iniciado"):
             if lineabase != None:
                 if str(lineabase.estado).__eq__("cerrada"):
-                    value =  '<div><div><a class="loginlogout" href="/revertir/?hid='+str(nrohistorial[0])+'">Historial</a></div><br/>'\
-                        '<div><a class="loginlogout" href="/detalleitem/?iid='+pklist+'">  Detalle</a></div><br/>'\
-                        '<div><a class="loginlogout" href="/relacionitem/?iid='+pklist+'">Ver relaciones</a></div><br/>'\
-                        '<div><a class="loginlogout" href="/abrirlineabaserelacion/?iid='+pklist+'">Crear relaciones</a></div><br/>'\
-                        '<div><a class="loginlogout" href="/calcularimpacto/?iid='+pklist+ '">  CalcularImpacto</a></div><br/>'\
-                        '<div><a class="edit_link" href="/abrirlineabase/?iid='+pklist+'" style="text-decoration:none">edit</a>'\
-                        '</div></div>'
+                    value = value + revertir + detalle + ver_relaciones + crear_relaciones_linea_base +\
+                            calcular_impacto + editar
                 elif str(lineabase.estado).__eq__("comprometida"):
                     if str(estadoItem[0]).__eq__("aprobado"):
-                        value =  '<div><div><a class="loginlogout" href="/revertir/?hid='+str(nrohistorial[0])+'">Historial</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/detalleitem/?iid='+pklist+'">  Detalle</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/relacionitem/?iid='+pklist+'">Ver relaciones</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/abrirlineabaserelacion/?iid='+pklist+'">Crear relaciones</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/calcularimpacto/?iid='+pklist+ '">  CalcularImpacto</a></div><br/>'\
-                            '<div><a class="edit_link" href="/abrirlineabase/?iid='+pklist+'" style="text-decoration:none">edit</a>'\
-                            '</div></div>'
+                        value = value + revertir + detalle + ver_relaciones + crear_relaciones_linea_base +\
+                            calcular_impacto + editar
                     else:
-                        value =  '<div><div><a class="loginlogout" href="/aprobaritem/?iid='+pklist+ '">Aprobar Item</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/revertir/?hid='+str(nrohistorial[0])+'">Historial</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/detalleitem/?iid='+pklist+'">  Detalle</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/relacionitem/?iid='+pklist+'">Ver relaciones</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/abrirlineabaserelacion/?iid='+pklist+'">Crear relaciones</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/calcularimpacto/?iid='+pklist+ '">  CalcularImpacto</a></div><br/>'\
-                            '<div><a class="edit_link" href="/abrirlineabase/?iid='+pklist+'" style="text-decoration:none">edit</a>'\
-                            '</div></div>'
+                        value = value + aprobar_item + revertir + detalle + ver_relaciones +\
+                        crear_relaciones_linea_base + calcular_impacto + editar
                 else:
                     if str(estadoItem[0]).__eq__("aprobado"):
-                        value =  '<div><div><a class="loginlogout" href="/revertir/?hid='+str(nrohistorial[0])+'">Historial</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/detalleitem/?iid='+pklist+'">  Detalle</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/relacionitem/?iid='+pklist+'">Ver relaciones</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/relacionitem/new/?iid='+pklist+'">Crear relaciones</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/calcularimpacto/?iid='+pklist+ '">  CalcularImpacto</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/adjuntos/new/?iid='+pklist+'">  Adjuntos</a></div><br/>'\
-                            '<div><a class="edit_link" href="'+pklist+'/edit" style="text-decoration:none">edit</a>'\
-                            '</div><div>'\
-                            '<form method="POST" action="'+pklist+'" class="button-to">'\
-                            '<input type="hidden" name="_method" value="DELETE" />'\
-                            '<input class="delete-button" onclick="return confirm(\'Are you sure?\');" value="delete" type="submit" '\
-                            'style="background-color: transparent; float:left; border:0; color: #286571; display: inline; margin: 0; padding: 0;"/>'\
-                            '</form>'\
-                            '</div>'\
-                            '</div>'
+                        value = value + revertir + detalle + ver_relaciones + crear_relaciones +\
+                            calcular_impacto + adjuntos + editar + borrar
                     else:
-                        value =  '<div><div><a class="loginlogout" href="/aprobaritem/?iid='+pklist+ '">Aprobar Item</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/revertir/?hid='+str(nrohistorial[0])+'">Historial</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/detalleitem/?iid='+pklist+'">  Detalle</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/relacionitem/?iid='+pklist+'">Ver relaciones</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/relacionitem/new/?iid='+pklist+'">Crear relaciones</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/calcularimpacto/?iid='+pklist+ '">  CalcularImpacto</a></div><br/>'\
-                            '<div><a class="loginlogout" href="/adjuntos/new/?iid='+pklist+'">  Adjuntos</a></div><br/>'\
-                            '<div><a class="edit_link" href="'+pklist+'/edit" style="text-decoration:none">edit</a>'\
-                            '</div><div>'\
-                            '<form method="POST" action="'+pklist+'" class="button-to">'\
-                            '<input type="hidden" name="_method" value="DELETE" />'\
-                            '<input class="delete-button" onclick="return confirm(\'Are you sure?\');" value="delete" type="submit" '\
-                            'style="background-color: transparent; float:left; border:0; color: #286571; display: inline; margin: 0; padding: 0;"/>'\
-                            '</form>'\
-                            '</div>'\
-                            '</div>'
+                        value = value + aprobar_item + revertir + detalle + ver_relaciones + crear_relaciones +\
+                            calcular_impacto + adjuntos + editar + borrar
             else:
                 if str(estadoItem[0]).__eq__("aprobado"):
-                    value =  '<div><div><a class="loginlogout" href="/revertir/?hid='+str(nrohistorial[0])+'">Historial</a></div><br/>'\
-                        '<div><a class="loginlogout" href="/detalleitem/?iid='+pklist+'">  Detalle</a></div><br/>'\
-                        '<div><a class="loginlogout" href="/relacionitem/?iid='+pklist+'">Ver relaciones</a></div><br/>'\
-                        '<div><a class="loginlogout" href="/relacionitem/new/?iid='+pklist+'">Crear relaciones</a></div><br/>'\
-                        '<div><a class="loginlogout" href="/calcularimpacto/?iid='+pklist+ '">  CalcularImpacto</a></div><br/>'\
-                        '<div><a class="loginlogout" href="/adjuntos/new/?iid='+pklist+'">  Adjuntos</a></div><br/>'\
-                        '<div><a class="edit_link" href="'+pklist+'/edit" style="text-decoration:none">edit</a>'\
-                        '</div><div>'\
-                        '<form method="POST" action="'+pklist+'" class="button-to">'\
-                        '<input type="hidden" name="_method" value="DELETE" />'\
-                        '<input class="delete-button" onclick="return confirm(\'Are you sure?\');" value="delete" type="submit" '\
-                        'style="background-color: transparent; float:left; border:0; color: #286571; display: inline; margin: 0; padding: 0;"/>'\
-                        '</form>'\
-                        '</div>'\
-                        '</div>'
+                    value = value + revertir + detalle + ver_relaciones + crear_relaciones +\
+                            calcular_impacto + adjuntos + editar + borrar
                 else:
-                    value =  '<div><div><a class="loginlogout" href="/aprobaritem/?iid='+pklist+ '">Aprobar Item</a></div><br/>'\
-                        '<div><a class="loginlogout" href="/revertir/?hid='+str(nrohistorial[0])+'">Historial</a></div><br/>'\
-                        '<div><a class="loginlogout" href="/detalleitem/?iid='+pklist+'">  Detalle</a></div><br/>'\
-                        '<div><a class="loginlogout" href="/relacionitem/?iid='+pklist+'">Ver relaciones</a></div><br/>'\
-                        '<div><a class="loginlogout" href="/relacionitem/new/?iid='+pklist+'">Crear relaciones</a></div><br/>'\
-                        '<div><a class="loginlogout" href="/calcularimpacto/?iid='+pklist+ '">  CalcularImpacto</a></div><br/>'\
-                        '<div><a class="loginlogout" href="/adjuntos/new/?iid='+pklist+'">  Adjuntos</a></div><br/>'\
-                        '<div><a class="edit_link" href="'+pklist+'/edit" style="text-decoration:none">edit</a>'\
-                        '</div><div>'\
-                        '<form method="POST" action="'+pklist+'" class="button-to">'\
-                        '<input type="hidden" name="_method" value="DELETE" />'\
-                        '<input class="delete-button" onclick="return confirm(\'Are you sure?\');" value="delete" type="submit" '\
-                        'style="background-color: transparent; float:left; border:0; color: #286571; display: inline; margin: 0; padding: 0;"/>'\
-                        '</form>'\
-                        '</div>'\
-                        '</div>'
+                    value = value + aprobar_item + revertir + detalle + ver_relaciones + crear_relaciones +\
+                            calcular_impacto + adjuntos + editar + borrar
+                        
+        value=value+'</div>'
         return value
     
 
