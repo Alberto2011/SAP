@@ -36,7 +36,7 @@
 	from sap.model.fase import Fase
 	pid=DBSession.query(Fase.idproyec).filter_by(id=fid).first()
   ?>
-  <a href='/fasedesarrollo/?pid=${pid[0]}'><input type="button" name="cancelar" value="Atrás"/></a>
+  <a href='/fasedesarrollo/?pid=${pid[0]}'><img src="${tg.url('/images/boton_atras.gif')}" align="left" style="border-style:none"/></a>
 
 </body>
 </html>
