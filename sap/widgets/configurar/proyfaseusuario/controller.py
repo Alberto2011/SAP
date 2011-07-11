@@ -192,25 +192,20 @@ class CrudRestController(RestController):
     @expose()
     @registered_validate(error_handler=new)
     def post(self, *args, **kw):
-        
-        log.debug("valor de kw %s" %kw)
-        
     	ids= kw['idPermiso']
     	longitud= len(kw['idPermiso'])
         
     	for indice in range(longitud):
             kw['idPermiso']= ids[indice]
-            
-            log.debug('idPermiso: %s' %kw)
             msj=DBSession.query(ProyFaseUsuario).filter_by(idProyecto=kw['idProyecto'], iduser=kw['iduser'], idFase=kw['idFase'],idPermiso=kw['idPermiso']).first()
-            log.debug('msg: %s' %msj)
+            
             if msj == None:
                 
                 self.provider.create(self.model, params=kw)
             else:
                 flash("El usuario ya fue adherido a la Fase elegida", "error")
                 redirect('new/?pid='+ kw['idProyecto'])
-            log.debug("prueba de error %s" %kw)
+                
         raise redirect('./?pid='+ kw['idProyecto'])
 
 
@@ -237,8 +232,6 @@ class CrudRestController(RestController):
         for i, arg in enumerate(args):
             d[pks[i]] = arg
         self.provider.delete(self.model, d)
-        
-        log.debug("ProyFaseUserD= %s" %d)
         
         #redirect('./' + '../' * (len(pks) - 1))
         redirect('../../../?pid='+ d['idProyecto'])

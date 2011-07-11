@@ -59,8 +59,6 @@ class UserProyTableFiller(TableFiller):
         order_by = kw.get('order_by', None)
         desc = kw.get('desc', False)
         
-        log.debug(kw)
-        
         if len(kw) > 0:
             if len(kw) > 1:
                 objs=[]

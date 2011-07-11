@@ -21,7 +21,7 @@
     </div>
     <div style="float:left; width:80%">
       <h1 style="margin-top:1px;">Lista de $model </h1>
-      <div style="margin:1ex 0; width:90%">
+      <div style="margin:1ex 0; width:120%">
       
       <div align="right">
 		  <form name="form1" method="_do_get_provider_count_and_objs">
@@ -35,7 +35,7 @@
 
         <span py:if="value_list" style="margin-left:2em" py:content="tmpl_context.paginators.value_list.pager(link='./')"/>
       </div>
-      <div class="crud_table" style="width:90%">
+      <div class="crud_table" style="width:120%">
         ${XML(tmpl_context.widget(value=value_list, action='../'+model.lower()+'s.json'))}
       </div>
     </div>
