@@ -189,7 +189,7 @@ class CrudRestController(RestController):
         
         """----------obtine el id del nuevo tipo creado-----------"""
         
-        idtipo= [x for x in (DBSession.query(TipoDeItem.id).filter_by(idFase=kw['idFase'],nombre=kw['nombre'],descripcion=kw['descripcion']).one())]
+        idtipo= [x for x in (DBSession.query(TipoDeItem.id).filter_by(idFase=kw['idFase'],nombre=kw['nombre'],descripcion=kw['descripcion']).first())]
         
         
         
